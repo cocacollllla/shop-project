@@ -10,27 +10,23 @@ import styled from 'styled-components';
 
 const Cart = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const item = useSelector(state => state.cart);
 
 
-const getCartItems = () => {
-
-    dbService.collection('cart').onSnapshot(snapshot => {
-      const cartItems = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
-      setProducts(cartItems);
-      dispatch(cartActions.replaceData(cartItems));
-
-    });
-};
-
 useEffect(() => {
-  getCartItems();
+  const getCartItems = dbService.collection('cart').onSnapshot(snapshot => {
+    const cartItems = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
+    setProducts(cartItems);
+    dispatch(cartActions.replaceData(cartItems));
+  });
+
   return() => {
-    setLoading(false);
+    getCartItems();
   }
 }, []);
+
+
 
 
 const addClickHandler = (id) => {

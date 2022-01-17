@@ -7,7 +7,6 @@ import styled from 'styled-components';
 
 const DetailCount = ({products}) => {
   const [count, setCount] = useState(1);
-  const [loading, setLoading] = useState(true);
   const [cartProducts, setCartProducts] = useState([]);
 
   const handleClickCart = () => {
@@ -24,12 +23,12 @@ const DetailCount = ({products}) => {
   }
 
   useEffect(() => {
-    dbService.collection('cart').onSnapshot(snapshot => {
+    const getItem = dbService.collection('cart').onSnapshot(snapshot => {
       const cartItemList = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
       setCartProducts(cartItemList);
     });
     return() => {
-      setLoading(false);
+      getItem();
     }
   }, []);
 

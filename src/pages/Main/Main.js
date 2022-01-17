@@ -9,17 +9,16 @@ import styled from 'styled-components';
 
 const Main = () => {
   const [option, setOption] = useState('all');
-  const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    dbService.collection('products').onSnapshot(snapshot => {
+    const getItem = dbService.collection('products').onSnapshot(snapshot => {
       const getProducts = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
       setProducts(getProducts);
     });
     return() => {
-      setLoading(false);
+      getItem();
     }
   }, []);
 
