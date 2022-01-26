@@ -80,13 +80,11 @@ const ProductImage = styled.div`
   }
   position: relative;
   overflow: hidden;
-
   &:after {
     content:"";
     display: block;
     padding: 0 0 100%;
   }
-
   img {
     position: absolute;
     width: 100%;

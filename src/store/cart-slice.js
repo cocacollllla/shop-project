@@ -11,12 +11,17 @@ const cartSlice = createSlice({
     plus: (state, action) => {
       const existingItem = state.find(el => el.id === action.payload);
       existingItem.quantity++;
+      existingItem.totalPrice = existingItem.quantity * existingItem.price;
       
     },
     minus: (state, action) => {
       const existingItem = state.find(el => el.id === action.payload);
       existingItem.quantity--;
+      existingItem.totalPrice = existingItem.quantity * existingItem.price;
     },
+    delete: (state, action) => 
+      state.filter(el => el.id !== action.payload)
+    ,
   }
 });
 

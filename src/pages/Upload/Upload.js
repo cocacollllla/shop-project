@@ -49,9 +49,7 @@ const Upload = () => {
 
   const onFileChange = (e) => {
     const files = e.target.files;
-    
     const theFile = files[0];
-    console.log(theFile);
     const reader = new FileReader(); 
     reader.onloadend = (finishedEvent) => {
       const result = finishedEvent.currentTarget.result;

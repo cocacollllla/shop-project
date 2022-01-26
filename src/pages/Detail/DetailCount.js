@@ -14,7 +14,7 @@ const DetailCount = ({products}) => {
     const data = {id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
     const cartItem = cartProducts.find(el => el.id === data.id);
 
-    if(cartItem !== undefined) { // 있다면
+    if(cartItem !== undefined) { 
       alert('장바구니에 존재하는 상품입니다.');
     } else {
       dbService.collection('cart').doc(data.title).set(data);

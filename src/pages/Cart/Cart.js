@@ -1,59 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { cartActions } from '../../store/cart-slice';
-import { dbService} from '../../myFirebase';
 import { priceCommas} from '../../data/Data';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdClose } from "react-icons/md";
+import { getCartData, cartQuantityPlus, cartQuantityMinus, cartDelete } from '../../store/cart-actions';
 import media from '../../styles/media';
 import styled from 'styled-components';
 
 const Cart = () => {
-  const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
   const item = useSelector(state => state.cart);
 
 
 useEffect(() => {
-  const getCartItems = dbService.collection('cart').onSnapshot(snapshot => {
-    const cartItems = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
-    setProducts(cartItems);
-    dispatch(cartActions.replaceData(cartItems));
-  });
+  dispatch(getCartData());
+  return () => {
 
-  return() => {
-    getCartItems();
   }
-}, []);
+}, [dispatch]);
 
 
-
-
-const addClickHandler = (id) => {
-  dispatch(cartActions.plus(id))
+const addClickHandler = (id, title, quantity, price) => {
+  dispatch(cartQuantityPlus(id, title, quantity, price));
 }
 
-const minusClickHandler = (id) => {
-  dispatch(cartActions.minus(id))
+const minusClickHandler = (id, title, quantity, price) => {
+  if(quantity > 1) {
+    dispatch(cartQuantityMinus(id, title, quantity, price))
+  } else {
+    alert('최소수량 입니다.')
+  }
+  
 }
 
-const modify = (title, quantity, price) => {
-  dbService.collection('cart').doc(title).update({
-    quantity,
-    totalPrice: quantity * price
-  });
-  alert('수정 완료되었습니다.')
-}
-
-const removeClickHandler = async (title) => {
+const removeClickHandler = (id, title) => {
   const ok = window.confirm('해당상품을 장바구니에서 삭제하시겠습니까?');
   if(ok) {
-    await dbService.collection('cart').doc(title).delete();
+    dispatch(cartDelete(id, title))
   }
 }
 
 
-const result = products.reduce((acc, current) => acc + current.totalPrice, 0);
+const result = item.reduce((acc, current) => acc + current.totalPrice, 0);
 
 
   return (
@@ -65,18 +53,16 @@ const result = products.reduce((acc, current) => acc + current.totalPrice, 0);
               <Itemimg><img src={itm.image} alt="d" /></Itemimg>
               <CartTitle>{itm.title}</CartTitle>
             </ImgTitle>
-      
             <QuantityBox>
               <CartQuantityBtn>
-                <div onClick={() => minusClickHandler(itm.id)}><AiOutlineMinusCircle /></div>
+                <div onClick={() => minusClickHandler(itm.id, itm.title, itm.quantity, itm.price)}><AiOutlineMinusCircle /></div>
                 <span>{itm.quantity}</span>
-                <div onClick={() => addClickHandler(itm.id)}><AiOutlinePlusCircle /></div>
-                <button onClick={() => modify(itm.title, itm.quantity, itm.price)}>수정</button>
+                <div onClick={() => addClickHandler(itm.id, itm.title, itm.quantity, itm.price)}><AiOutlinePlusCircle /></div>
               </CartQuantityBtn>
-              <CartPrice>{priceCommas(itm.totalPrice)} 원</CartPrice>
+              <CartPrice>{priceCommas(itm.totalPrice+'')} 원</CartPrice>
             </QuantityBox>
                 
-            <CloseBtn onClick={() => removeClickHandler(itm.title)}><MdClose /></CloseBtn>
+            <CloseBtn onClick={() => removeClickHandler(itm.id, itm.title)}><MdClose /></CloseBtn>
             
           </ItemWrap>
         ))}

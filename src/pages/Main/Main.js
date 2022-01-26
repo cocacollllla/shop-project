@@ -1,31 +1,31 @@
 import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { dbService } from '../../myFirebase';
+import { useDispatch, useSelector } from 'react-redux';
 import {MAINPRODUCTS} from '../../data/Data';
 import Carousel from './Carousel';
 import MainProducts from './MainProducts';
+import { getData } from '../../store/cart-actions';
 import media from '../../styles/media';
 import styled from 'styled-components';
 
 const Main = () => {
   const [option, setOption] = useState('all');
-  const [products, setProducts] = useState([]);
+
+  const item = useSelector(state => state.cart);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const getItem = dbService.collection('products').onSnapshot(snapshot => {
-      const getProducts = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
-      setProducts(getProducts);
-    });
-    return() => {
-      getItem();
-    }
-  }, []);
+    dispatch(getData());
+  }, [dispatch]);
 
 
   const clickTabChange = (op) => {
     setOption(op);
   }
+
+    console.log(item);
 
   return (
     <>
@@ -44,7 +44,7 @@ const Main = () => {
         </ProductTab>
         <ProductBox>
           <ProductList>
-            <MainProducts products={products} option={option} />
+            <MainProducts products={item} option={option} />
           </ProductList>
           <MoreBtn onClick={() => navigate(`/${option}`)}>more</MoreBtn>
         </ProductBox>
