@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { dbService } from '../../myFirebase';
-import { priceCommas } from '../../data/Data';
+import { priceCommas, MAINPRODUCTS } from '../../data/Data';
 import DetailCount from './DetailCount';
 import SubListMenu from '../../components/SubListMenu';
 import media from '../../styles/media';
@@ -9,15 +9,15 @@ import styled from 'styled-components';
 
 const Detail = () => {
   const [products, setProducts] = useState([]);
-  const location = useLocation();
+  const params = useParams();
 
 
-  let currentMenu = location.pathname.split('/')[1];
-  let currentId = parseInt(location.pathname.split('/')[3]);
+  let currentMenu = params.menu;
+  const productId = parseInt(params.id);
 
 
   const getFilterIdItems = async () => {
-    const getProduct = await dbService.collection('products').where('id', '==', currentId).get();
+    const getProduct = await dbService.collection('products').where('id', '==', productId).get();
       const Product = getProduct.docs.map((doc) => doc.data());
       setProducts(Product[0]);
   };
@@ -26,10 +26,11 @@ const Detail = () => {
     getFilterIdItems();
   }, []);
 
+
   return (
     <div>
     <DetailWrap>
-      <SubListMenu currentMenu={currentMenu} />
+      <SubListMenu list={MAINPRODUCTS} currentMenu={currentMenu} />
       <DetailBox>
         <ProductImage>
           <img src={products.attatchmentUrl} alt="" />

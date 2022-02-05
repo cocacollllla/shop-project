@@ -5,6 +5,11 @@ import Sub from './pages/Sub/Sub';
 import Detail from './pages/Detail/Detail';
 import Cart from './pages/Cart/Cart';
 import Upload from './pages/Upload/Upload';
+import Notice from './pages/Board/Notice';
+import NoticeView from './pages/Board/NoticeView';
+import NoticeUpload from './pages/Board/NoticeUpload';
+import FaqUpload from './pages/Board/FaqUpload';
+import Faq from './pages/Board/Faq';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import styled from 'styled-components';
@@ -21,6 +26,13 @@ const Routing = () => {
             <Route path={"/cart"} element={<Cart />} />
             <Route path={"/:option"} element={<Sub />} />
             <Route path={"/upload"} element={<Upload />} />
+            <Route path={"/notice/:state"} element={<NoticeUpload />} />
+            <Route path={"/notice/:state/:id"} element={<NoticeUpload />} />
+            <Route path={"/notice/view/:id"} element={<NoticeView />} />
+            <Route path={"/notice"} element={<Notice />} />
+            <Route path={"/faq/:state"} element={<FaqUpload />} />
+            <Route path={"/faq/:state/:id"} element={<FaqUpload />} />
+            <Route path={"/faq"} element={<Faq />} />
           </Routes>
         </MainContent>
         <Footer />

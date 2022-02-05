@@ -13,6 +13,8 @@ export const PRODUCTOPTION = [
   {id: 3, class:"image", option: "이미지", content: 0},
 ];
 
+export const FAQCATEGORY = ['상품', '배송/포장', '주문/결제', '취소/교환/환불'];
+
 
 export const MAINIMG = [
   {image: '/assets/main-slide01.jpg'},
@@ -25,6 +27,7 @@ export const priceCommas = (price) => {
 }
 
 export const MAINPRODUCTS = ['all', 'necklace', 'bracelet', 'earring', 'ring'];
+export const BOARDLIST = ['notice', 'faq'];
 
 
 

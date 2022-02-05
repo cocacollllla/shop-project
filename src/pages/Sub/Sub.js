@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import { dbService } from '../../myFirebase';
+import { MAINPRODUCTS } from '../../data/Data';
 import SubListItems from './SubListItems';
 import SubListMenu from '../../components/SubListMenu';
 import media from '../../styles/media';
@@ -9,7 +10,9 @@ import styled from 'styled-components';
 const Sub = () => {
   const [products, setProducts] = useState([]);
   const location = useLocation();
+  const params = useParams();
 
+  const currentMenu = params.option;
 
   const getItems = async () => {
     if(currentMenu === 'all') {
@@ -28,18 +31,17 @@ const Sub = () => {
     getItems();
   }, [location]);
 
-  let currentMenu = location.pathname.split('/')[1];
-
-
   return (
     <SubListWrap>
-      <SubListMenu currentMenu={currentMenu} />
+      <SubListMenu list={MAINPRODUCTS} currentMenu={currentMenu} />
       <SubProducts>
         <SubListItems  posts={products} currentMenu={currentMenu} />
       </SubProducts>
     </SubListWrap>
   )
 }
+
+
 
 export default Sub;
 

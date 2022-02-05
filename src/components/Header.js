@@ -43,6 +43,7 @@ const Header = () => {
         <Logo onClick={() => {navigate(`/`);}}>Acc</Logo>
         <HeaderButton>
           <CreateButton onClick={() => {navigate(`/upload`);}}>상품등록</CreateButton>
+          <CreateButton onClick={() => {navigate(`/notice`);}}>고객센터</CreateButton>
           <CartWrap  onClick={() => {navigate(`/cart`);}}>
             <BsCart4 className="cartIcon" />
             <div>{products.length}</div>

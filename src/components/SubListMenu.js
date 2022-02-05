@@ -1,18 +1,17 @@
 import React from 'react';
-import {MAINPRODUCTS} from '../data/Data';
 import media from '../styles/media';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 
-const SubListMenu = ({currentMenu}) => {
+const SubListMenu = ({currentMenu, list}) => {
 
   const navigate = useNavigate();
 
   return (
     <SubListMenuWrap>
       <ul>
-        {MAINPRODUCTS.map((optionName, idx) => (
+        {list.map((optionName, idx) => (
           <li key={idx} onClick={() => navigate(`/${optionName}`)} className={currentMenu === optionName ? 'isOnMenu' : null} >
             <span>{optionName.toUpperCase()}</span>
           </li>
