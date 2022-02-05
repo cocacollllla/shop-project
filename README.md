@@ -3,7 +3,7 @@
 
 ## 배포주소
 
-[https://musing-shannon-a643ad.netlify.app/](https://musing-shannon-a643ad.netlify.app/)
+[https://fervent-brattain-b11b13.netlify.app/](https://fervent-brattain-b11b13.netlify.app/)
 
 ### 개발 인원 및 기간
 

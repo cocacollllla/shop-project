@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { dbService } from '../../myFirebase';
 import { priceCommas, MAINPRODUCTS } from '../../data/Data';
 import DetailCount from './DetailCount';

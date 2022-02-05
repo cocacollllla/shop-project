@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { BOARDLIST } from '../../data/Data';
 import SubListMenu from '../../components/SubListMenu';
 import { noticeDelete } from '../../store/board-actions';
