@@ -56,9 +56,7 @@ const Faq = () => {
               <details key={el.id}>
                 <summary><span>[{el.category}]</span>{el.title}</summary>
                 <Contents>
-                  {el.contents.split('\n').map((line, idx) => (
-                    <p key={idx}>{line}</p>
-                  ))}
+                  <p>{el.contents}</p>
                   <Btn>
                     <div onClick={() => navigate(`/faq/update/${el.id}`)}>수정</div>
                     <div onClick={() => handleClickNoticeDelete(el.id, el.docId)}>삭제</div>
@@ -156,6 +154,7 @@ const Contents = styled.div`
 
   p {
     line-height: 1.5rem;
+    white-space: pre-wrap;
   }
 
 `;
