@@ -10,7 +10,8 @@ export const PRODUCTOPTION = [
   // {id: 2, class:"color", option: "색상", content: ["골드", "화이트골드", "로즈골드"], require: true},
   // {id: 4, class:"size", option: "호수", content: ringSize, require: false},
   {id: 2, class:"price", option: "가격", content: 0},
-  {id: 3, class:"image", option: "이미지", content: 0},
+  {id: 3, class:"contents", option: "내용", content: 0},
+  {id: 4, class:"image", option: "이미지", content: 0},
 ];
 
 export const FAQCATEGORY = ['상품', '배송/포장', '주문/결제', '취소/교환/환불'];

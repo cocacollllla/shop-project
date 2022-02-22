@@ -19,6 +19,8 @@ const Options = ({ option, handleChange, optionValue, onFileChange }) => {
       )
     } else if(option.option === '이미지') {
       return <input type="file" accept="image/*" onChange={onFileChange} />
+    } else if(option.option === '내용') {
+      return <textarea name="contents" onChange={handleChange}></textarea>
     } else {
       return <input type={option.option === '가격' ? "number" :"text"} name={option.class} onChange={handleChange} />
     }
@@ -50,8 +52,6 @@ const OptionWrap = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  // height: 4.5rem;
-  
 
   &:last-of-type {
     border-bottom: 1px solid ${(props) => props.theme.borderColor};
@@ -71,7 +71,7 @@ const OptionName = styled.div`
 `;
 
 const OptionContent = styled.div`
-  width: 300px;
+  width: 500px;
   ${media.mobile} {
     display: block;
   }
@@ -94,7 +94,8 @@ const OptionContent = styled.div`
 
   textarea {
     width: 100%;
-    height: 100px;
+    height: 200px;
+    padding: .5rem;
     border-radius: 5px;
     border: 1px solid ${(props) => props.theme.borderColor};
   }

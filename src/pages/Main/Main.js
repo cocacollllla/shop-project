@@ -25,7 +25,6 @@ const Main = () => {
     setOption(op);
   }
 
-    console.log(item);
 
   return (
     <>

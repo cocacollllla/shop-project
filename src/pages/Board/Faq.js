@@ -131,7 +131,6 @@ const NoticeList = styled.div`
   }
 
   summary {
-
     border-top: 1px solid #333;
     padding: 20px;
     list-style: none;
