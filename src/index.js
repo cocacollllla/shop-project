@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import store from './store/index';
 import GlobalStyle from './styles/GlobalStyle';
 import { ThemeProvider } from 'styled-components';
-import Routes from './Routes';
+import App from './App';
 import theme from './styles/theme';
 
 ReactDOM.render(
@@ -12,7 +12,7 @@ ReactDOM.render(
     <Provider store={store}>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
-        <Routes />
+        <App />
       </ThemeProvider>
     </Provider>
  </>,

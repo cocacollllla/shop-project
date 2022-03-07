@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Main from './pages/Main/Main';
 import Sub from './pages/Sub/Sub';
 import Detail from './pages/Detail/Detail';
@@ -13,15 +13,20 @@ import Faq from './pages/Board/Faq';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import styled from 'styled-components';
+import Signup from './Auth/Signup';
 
-const Routing = () => {
+const Routing = ({ isLoggedIn }) => {
+  console.log(isLoggedIn);
   return (
     <Router>
       <Container>
-        <Header />
+        <Header isLoggedIn={isLoggedIn} />
         <MainContent>
           <Routes>
             <Route path={"/"} element={<Main />} />
+            {!isLoggedIn ? <Route path={"/:sign"} element={<Signup />} />
+             : <Route path={"/:sign"} element={<Navigate to="/" />} />
+            }
             <Route path={"/:menu/detail/:id"} element={<Detail />} />
             <Route path={"/cart"} element={<Cart />} />
             <Route path={"/:option"} element={<Sub />} />

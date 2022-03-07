@@ -30,6 +30,17 @@ export const priceCommas = (price) => {
 export const MAINPRODUCTS = ['all', 'necklace', 'bracelet', 'earring', 'ring'];
 export const BOARDLIST = ['notice', 'faq'];
 
+export const SIGN = [
+  {
+    sign: 'signin',
+    title: '로그인'
+  },
+  {
+    sign: 'signup',
+    title: '회원가입'
+  }
+];
+
 
 
 

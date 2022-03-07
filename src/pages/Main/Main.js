@@ -12,6 +12,7 @@ const Main = () => {
   const [option, setOption] = useState('all');
 
   const item = useSelector(state => state.cart);
+  const users = useSelector(state => state.users);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -25,6 +26,7 @@ const Main = () => {
     setOption(op);
   }
 
+  console.log(users);
 
   return (
     <>
