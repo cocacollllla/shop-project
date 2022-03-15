@@ -33,7 +33,7 @@ const FormLayout = ({sign, title, inputData}) => {
           })
         });
         await dbService.collection("users").add({displayName: signInfo.name, email: signInfo.email});
-        dispatch(usersActions.replaceData({displayName: signInfo.name, email: signInfo.email}));
+        // dispatch(usersActions.replaceData({displayName: signInfo.name, email: signInfo.email}));
         // await authService.signOut();
       } else {
         await authService.signInWithEmailAndPassword(signInfo.email, signInfo.password);

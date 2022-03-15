@@ -37,6 +37,16 @@ const Header = ({isLoggedIn}) => {
     });
   };
 
+  const goToCart = () => {
+    let sign = 'signin';
+    if(!isLoggedIn) {
+      alert('로그인시 이용할 수 있습니다.');
+      navigate(`/sign/${sign}`);
+    } else {
+      navigate(`/cart`);
+    }
+  }
+
   console.log(user);
 
   return (
@@ -49,13 +59,13 @@ const Header = ({isLoggedIn}) => {
           <CreateButton>{user.displayName}</CreateButton><CreateButton onClick={() => {authService.signOut(); navigate(`/`);}}>로그아웃</CreateButton>
           </> :
           SIGN.map((el, idx) => (
-            <CreateButton key={idx} onClick={() => {navigate(`/${el.sign}`);}}>{el.title}</CreateButton>
+            <CreateButton key={idx} onClick={() => {navigate(`/sign/${el.sign}`);}}>{el.title}</CreateButton>
           ))
         }
           
           <CreateButton onClick={() => {navigate(`/upload`);}}>상품등록</CreateButton>
           <CreateButton onClick={() => {navigate(`/notice`);}}>고객센터</CreateButton>
-          <CartWrap  onClick={() => {navigate(`/cart`);}}>
+          <CartWrap  onClick={goToCart}>
             <BsCart4 className="cartIcon" />
             <div>{products.length}</div>
           </CartWrap>

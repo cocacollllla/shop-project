@@ -24,8 +24,8 @@ const Routing = ({ isLoggedIn }) => {
         <MainContent>
           <Routes>
             <Route path={"/"} element={<Main />} />
-            {!isLoggedIn ? <Route path={"/:sign"} element={<Signup />} />
-             : <Route path={"/:sign"} element={<Navigate to="/" />} />
+            {!isLoggedIn ? <Route path={"/sign/:sign"} element={<Signup />} />
+             : <Route path={"/sign/:sign"} element={<Navigate to="/" />} />
             }
             <Route path={"/:menu/detail/:id"} element={<Detail />} />
             <Route path={"/cart"} element={<Cart />} />

@@ -13,10 +13,10 @@ const Signup = () => {
     let sign = '';
     if(params.sign === 'signup') {
       sign = 'signin';
-      navigate(`/${sign}`);
+      navigate(`/sign/${sign}`);
     } else {
       sign = 'signup';
-      navigate(`/${sign}`)
+      navigate(`/sign/${sign}`)
     }
   }
 

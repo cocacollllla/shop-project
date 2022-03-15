@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { priceCommas} from '../../data/Data';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
@@ -6,72 +6,79 @@ import { MdClose } from "react-icons/md";
 import { getCartData, cartQuantityPlus, cartQuantityMinus, cartDelete } from '../../store/cart-actions';
 import media from '../../styles/media';
 import styled from 'styled-components';
+import { dbService } from '../../myFirebase';
 
 const Cart = () => {
   const dispatch = useDispatch();
   const item = useSelector(state => state.cart);
+  const loginUser = useSelector(state => state.users[0]);
 
 
 useEffect(() => {
-  dispatch(getCartData());
+  dispatch(getCartData(loginUser.uid));
   return () => {
 
   }
 }, [dispatch]);
 
 
-const addClickHandler = (id, title, quantity, price) => {
-  dispatch(cartQuantityPlus(id, title, quantity, price));
+const addClickHandler = (docID, id, quantity, price) => {
+  dispatch(cartQuantityPlus(docID, id, quantity, price));
 }
 
-const minusClickHandler = (id, title, quantity, price) => {
+const minusClickHandler = (docID, id, quantity, price) => {
   if(quantity > 1) {
-    dispatch(cartQuantityMinus(id, title, quantity, price))
+    dispatch(cartQuantityMinus(docID, id, quantity, price))
   } else {
     alert('최소수량 입니다.')
   }
   
 }
 
-const removeClickHandler = (id, title) => {
+const removeClickHandler = (docID, id) => {
   const ok = window.confirm('해당상품을 장바구니에서 삭제하시겠습니까?');
   if(ok) {
-    dispatch(cartDelete(id, title))
+    dispatch(cartDelete(docID, id))
   }
 }
 
 
 const result = item.reduce((acc, current) => acc + current.totalPrice, 0);
 
+console.log(item);
+
 
   return (
 
       <DetailWrap>
-        {item && item.map((itm, idx) => (
-          <ItemWrap key={idx}>
-            <ImgTitle>
-              <Itemimg><img src={itm.image} alt="d" /></Itemimg>
-              <CartTitle>{itm.title}</CartTitle>
-            </ImgTitle>
-            <QuantityBox>
-              <CartQuantityBtn>
-                <div onClick={() => minusClickHandler(itm.id, itm.title, itm.quantity, itm.price)}><AiOutlineMinusCircle /></div>
-                <span>{itm.quantity}</span>
-                <div onClick={() => addClickHandler(itm.id, itm.title, itm.quantity, itm.price)}><AiOutlinePlusCircle /></div>
-              </CartQuantityBtn>
-              <CartPrice>{priceCommas(itm.totalPrice+'')} 원</CartPrice>
-            </QuantityBox>
-                
-            <CloseBtn onClick={() => removeClickHandler(itm.id, itm.title)}><MdClose /></CloseBtn>
-            
-          </ItemWrap>
-        ))}
-       
-
-        <CartTotalPriceWrap>
-          <CartTotalTitle>총합계금액</CartTotalTitle>
-          <CartTotalPrice>{priceCommas(result)} 원</CartTotalPrice>
-        </CartTotalPriceWrap>
+        {item.length === 0 ?
+        <NoData>장바구니에 상품이 없습니다.</NoData> :
+        <>
+          {item && item.map((itm, idx) => (
+            <ItemWrap key={idx}>
+              <ImgTitle>
+                <Itemimg><img src={itm.image} alt="d" /></Itemimg>
+                <CartTitle>{itm.title}</CartTitle>
+              </ImgTitle>
+              <QuantityBox>
+                <CartQuantityBtn>
+                  <div onClick={() => minusClickHandler(itm.docID, itm.id, itm.quantity, itm.price)}><AiOutlineMinusCircle /></div>
+                  <span>{itm.quantity}</span>
+                  <div onClick={() => addClickHandler(itm.docID, itm.id, itm.quantity, itm.price)}><AiOutlinePlusCircle /></div>
+                </CartQuantityBtn>
+                <CartPrice>{priceCommas(itm.totalPrice+'')} 원</CartPrice>
+              </QuantityBox>
+                  
+              <CloseBtn onClick={() => removeClickHandler(itm.docID, itm.id)}><MdClose /></CloseBtn>
+            </ItemWrap>
+          ))}
+        
+          <CartTotalPriceWrap>
+            <CartTotalTitle>총합계금액</CartTotalTitle>
+            <CartTotalPrice>{priceCommas(result)} 원</CartTotalPrice>
+          </CartTotalPriceWrap>
+        </>
+      }
 
       </DetailWrap>
 
@@ -106,11 +113,9 @@ const ItemWrap = styled.div`
   align-items: center;
   border-bottom: 1px solid #e3e3e3;
   text-align: center;
-
   &:first-of-type {
     border-top: 1px solid #e3e3e3
   }
-
   button {
     border: none;
     background: transparent;
@@ -122,13 +127,11 @@ const ItemWrap = styled.div`
 const Itemimg = styled.div`
   position: relative;
   overflow: hidden;
-
   &:after {
     content:"";
     display: block;
     padding: 0 0 60%;
   }
-
   img {
     position: absolute;
     width: 60%;
@@ -168,24 +171,18 @@ const CartPrice = styled.div`
 
 
 const CartQuantityBtn = styled.div`
-
   display: flex;
   justify-content: flex-start;
   align-items: center;
-
   div {
     padding: 1rem .7rem;
     font-size: 1.2rem;
     margin-top: 4px;
     cursor: pointer;
   }
-
-
-
   span {
     font-weight: 500;
   }
-
   
 `;
 
@@ -196,7 +193,6 @@ const CloseBtn = styled.button`
     top: 1rem;
     right: 1rem;
   }
-
   svg {
     ${media.mobile} {
     font-size: 1.2rem;
@@ -221,4 +217,8 @@ const CartTotalTitle = styled.div`
 const CartTotalPrice = styled.div`
   font-size: 1.5rem;
   font-weight: 500;
+`;
+
+const NoData = styled.div`
+  text-align: center;
 `;

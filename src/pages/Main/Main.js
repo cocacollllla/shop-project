@@ -7,9 +7,11 @@ import MainProducts from './MainProducts';
 import { getData } from '../../store/cart-actions';
 import media from '../../styles/media';
 import styled from 'styled-components';
+import { dbService } from '../../myFirebase';
 
 const Main = () => {
   const [option, setOption] = useState('all');
+  const [products, setProducts] = useState([]);
 
   const item = useSelector(state => state.cart);
   const users = useSelector(state => state.users);
@@ -18,15 +20,21 @@ const Main = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getData());
-  }, [dispatch]);
+    dbService.collection('products').get().then((querySnapshot) => {
+      let productItems = [];
+      querySnapshot.forEach((doc) => {
+        productItems = [...productItems, { docId:doc.id, ...doc.data()} ]
+      });
+      setProducts(productItems);
+    });
+  }, []);
 
 
   const clickTabChange = (op) => {
     setOption(op);
   }
 
-  console.log(users);
+  console.log(products);
 
   return (
     <>
@@ -45,7 +53,7 @@ const Main = () => {
         </ProductTab>
         <ProductBox>
           <ProductList>
-            <MainProducts products={item} option={option} />
+            <MainProducts products={products} option={option} />
           </ProductList>
           <MoreBtn onClick={() => navigate(`/${option}`)}>more</MoreBtn>
         </ProductBox>

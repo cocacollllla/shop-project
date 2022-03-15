@@ -13,9 +13,10 @@ function App() {
     authService.onAuthStateChanged(user => {
       if(user) {
         setIsLoggedIn(true);
-        dispatch(usersActions.replaceData({displayName: user.displayName, email: user.email}));
+        dispatch(usersActions.replaceData({uid: user.uid, displayName: user.displayName, email: user.email}));
       } else {
         setIsLoggedIn(false);
+        dispatch(usersActions.replaceData());
       }
       setInit(true);
     });

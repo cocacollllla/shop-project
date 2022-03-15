@@ -4,38 +4,66 @@ import { dbService } from '../../myFirebase';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import media from '../../styles/media';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import firebase from "firebase/compat/app";
 
 const DetailCount = ({products}) => {
   const [count, setCount] = useState(1);
   const [cartProducts, setCartProducts] = useState([]);
+  const [userBox, setUserBox] = useState([]);
+  const loginUser = useSelector(state => state.users[0]);
+
+  // const handleClickCart = () => {
+
+  //   const data = {id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
+  //   // const cartItem = cartProducts.find(el => el.id === data.id);
+
+  //   // if(cartItem !== undefined) { 
+  //   //   alert('장바구니에 존재하는 상품입니다.');
+  //   // } else {
+  //     if(cartProducts !== undefined) {
+  //       dbService.collection('users').doc(cartProducts.id).update({
+  //         cart: firebase.firestore.FieldValue.arrayUnion(data)
+  //       });
+  //     }
+  //     alert('선택한 상품을 장바구니에 담았습니다.')
+  //   // }
+  // }
 
   const handleClickCart = () => {
 
-    const data = {id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
+    const data = {uid: loginUser.uid, id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
     const cartItem = cartProducts.find(el => el.id === data.id);
 
     if(cartItem !== undefined) { 
       alert('장바구니에 존재하는 상품입니다.');
     } else {
-      dbService.collection('cart').doc(data.title).set(data);
+      dbService.collection('test_cart').add(data);
       alert('선택한 상품을 장바구니에 담았습니다.')
     }
   }
 
   useEffect(() => {
-    const getItem = dbService.collection('cart').onSnapshot(snapshot => {
-      const cartItemList = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
-      setCartProducts(cartItemList);
-    });
-    return() => {
-      getItem();
+    if(loginUser !== undefined) {
+      // const getItem = dbService.collection('test_cart').onSnapshot(snapshot => {
+      //   const cartItemList = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
+      //   setCartProducts(cartItemList);
+      // });
+      const getItem = dbService.collection('test_cart').where('uid', "==", loginUser.uid).onSnapshot((querySnapshot) => {
+        const cartItemList = querySnapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
+        setCartProducts(cartItemList);
+      });
+      return() => {
+        getItem();
+      }
     }
+    
   }, []);
 
 
   const totalPrice = products.price * count;
 
-
+  
   return (
     <>
       <div>
