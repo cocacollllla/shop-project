@@ -14,6 +14,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import styled from 'styled-components';
 import Signup from './Auth/Signup';
+import EditProfile from './Auth/EditProfile';
 
 const Routing = ({ isLoggedIn }) => {
   console.log(isLoggedIn);
@@ -27,6 +28,7 @@ const Routing = ({ isLoggedIn }) => {
             {!isLoggedIn ? <Route path={"/sign/:sign"} element={<Signup />} />
              : <Route path={"/sign/:sign"} element={<Navigate to="/" />} />
             }
+            <Route path={"/sign/edit"} element={<EditProfile />} />
             <Route path={"/:menu/detail/:id"} element={<Detail />} />
             <Route path={"/cart"} element={<Cart />} />
             <Route path={"/:option"} element={<Sub />} />

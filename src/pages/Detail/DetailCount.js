@@ -2,16 +2,24 @@ import React, {useState, useEffect} from 'react';
 import { priceCommas } from '../../data/Data';
 import { dbService } from '../../myFirebase';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
+import { IoIosHeartEmpty, IoIosHeart } from "react-icons/io";
 import media from '../../styles/media';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import firebase from "firebase/compat/app";
+import { productsActions } from '../../store/products-slice';
+import { favoriteFalse, favoriteTrue } from '../../store/products-actions';
+import { Navigate } from 'react-router-dom';
 
-const DetailCount = ({products}) => {
+const DetailCount = () => {
   const [count, setCount] = useState(1);
   const [cartProducts, setCartProducts] = useState([]);
-  const [userBox, setUserBox] = useState([]);
-  const loginUser = useSelector(state => state.users[0]);
+  const user = useSelector(state => state.users);
+  const products = useSelector(state => state.products[0]);
+  // const userInfo = [...user];
+  // const useuse = userInfo.filter((el => el.id === products.id));
+  const [heart, setHeart] = useState(false);
+  const dispatch = useDispatch();
 
   // const handleClickCart = () => {
 
@@ -32,24 +40,38 @@ const DetailCount = ({products}) => {
 
   const handleClickCart = () => {
 
-    const data = {uid: loginUser.uid, id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
+    if(user === null) {
+      alert('로그인이 필요한 서비스 입니다.')
+    } else {
+
+    
+    const data = {uid: user.uid, id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
     const cartItem = cartProducts.find(el => el.id === data.id);
 
-    if(cartItem !== undefined) { 
+    if(cartItem !== null) { 
       alert('장바구니에 존재하는 상품입니다.');
     } else {
       dbService.collection('test_cart').add(data);
       alert('선택한 상품을 장바구니에 담았습니다.')
     }
   }
+    
+  }
 
   useEffect(() => {
-    if(loginUser !== undefined) {
-      // const getItem = dbService.collection('test_cart').onSnapshot(snapshot => {
-      //   const cartItemList = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
-      //   setCartProducts(cartItemList);
-      // });
-      const getItem = dbService.collection('test_cart').where('uid', "==", loginUser.uid).onSnapshot((querySnapshot) => {
+    if(user !== null) { 
+      if(products.favorite.indexOf(user.uid) < 0) {
+        setHeart(false)
+      } else {
+        setHeart(true)
+      }
+    // } else if(userInfo[0] === undefined) {
+    } else {
+      setHeart(false);
+    }
+    if(user !== null) {
+
+      const getItem = dbService.collection('test_cart').where('uid', "==", user.uid).onSnapshot((querySnapshot) => {
         const cartItemList = querySnapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
         setCartProducts(cartItemList);
       });
@@ -60,9 +82,38 @@ const DetailCount = ({products}) => {
     
   }, []);
 
+  const handleClickFavorite = () => {
+    // dbService.collection('users').doc(loginUser.docID).update({
+    //   favorite: 
+    // });
+    // dispatch(plusFav(loginUser.docID, products.id));
+
+    if(user !== null) {
+      if(products.favorite.indexOf(user.uid) < 0) {
+        console.log('없으니까 넣을게');
+        let fav = products.favorite;
+        dispatch(favoriteTrue(products.docID, user.uid, fav));
+        setHeart(true);
+      } else {
+
+        console.log('삭제할게');
+        let fav = products.favorite;
+        dispatch(favoriteFalse(products.docID, user.uid, fav));
+        setHeart(false);
+
+      }
+    } else {
+      alert('로그인이 필요한 서비스 입니다.');
+    }
+  }
+
+
+
 
   const totalPrice = products.price * count;
 
+console.log(user);
+console.log(heart);
   
   return (
     <>
@@ -84,7 +135,11 @@ const DetailCount = ({products}) => {
             <ProductTotalPrice>{priceCommas(totalPrice)} 원</ProductTotalPrice>
           </ProductTotal>
         } 
-        <CartBtn onClick={handleClickCart}>장바구니 넣기</CartBtn>
+        <BtnBox>
+          <FavoriteBtn onClick={handleClickFavorite}>{heart ? <IoIosHeart className="favoriteOnIcon" /> : <IoIosHeartEmpty className="favoriteIcon" />}</FavoriteBtn>
+          <CartBtn onClick={handleClickCart}>장바구니 넣기</CartBtn>
+        </BtnBox>
+        
       </ButtonWrap>
     </>
   )
@@ -152,6 +207,29 @@ const ProductTotalPrice = styled.div`
   font-weight: 500;
   ${media.mobile} {
     font-size: 1.2rem;
+  }
+`;
+
+const BtnBox = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 6fr;
+  grid-column-gap: 10px;
+`;
+
+const FavoriteBtn = styled.div`
+  padding: .7rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+
+  .favoriteIcon {
+    font-size: 2rem;
+  }
+
+  .favoriteOnIcon {
+    font-size: 2rem;
+    fill: #ba1500;
   }
 `;
 

@@ -14,7 +14,8 @@ const Main = () => {
   const [products, setProducts] = useState([]);
 
   const item = useSelector(state => state.cart);
-  const users = useSelector(state => state.users);
+  const user = useSelector(state => state.users);
+  // const userInfo = [...users];
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -34,7 +35,8 @@ const Main = () => {
     setOption(op);
   }
 
-  console.log(products);
+  // console.log(userInfo);
+  console.log(user);
 
   return (
     <>

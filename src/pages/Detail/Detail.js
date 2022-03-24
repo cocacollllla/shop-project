@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { dbService } from '../../myFirebase';
 import { priceCommas, MAINPRODUCTS } from '../../data/Data';
@@ -6,41 +7,52 @@ import DetailCount from './DetailCount';
 import SubListMenu from '../../components/SubListMenu';
 import media from '../../styles/media';
 import styled from 'styled-components';
+import { productsActions } from '../../store/products-slice';
 
 const Detail = () => {
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
   const params = useParams();
-
+  const dispatch = useDispatch();
+  const products = useSelector(state => state.products);
 
   let currentMenu = params.menu;
   const productId = parseInt(params.id);
 
 
-  const getFilterIdItems = async () => {
-    const getProduct = await dbService.collection('products').where('id', '==', productId).get();
-      const Product = getProduct.docs.map((doc) => doc.data());
-      setProducts(Product[0]);
-  };
+  // const getFilterIdItems = async () => {
+  //   const getProduct = await dbService.collection('products').where('id', '==', productId).get();
+  //     const Product = getProduct.docs.map(doc => ({ docID:doc.id, ...doc.data()}));
+  //     // setProducts(Product[0]);
+  //     dispatch(productsActions.replaceData(Product));
+  // };
 
   useEffect(() => {
-    getFilterIdItems();
-  }, []);
+    dbService.collection('products').where('id', '==', productId).onSnapshot((querySnapshot) => {
+      const Product = querySnapshot.docs.map(doc => ({ docID:doc.id, ...doc.data()}));
+      dispatch(productsActions.replaceData(Product));
+    });
+  }, [dispatch]);
+
+  // console.log(propro);
 
 
   return (
     <div>
     <DetailWrap>
       <SubListMenu list={MAINPRODUCTS} currentMenu={currentMenu} />
-      <DetailBox>
-        <ProductImage>
-          <img src={products.attatchmentUrl} alt="" />
-        </ProductImage>
-        <ProductInfo>
-          <ProductTitle>{products.title}</ProductTitle>
-          {products.price > 0 && <ProductPrice>{priceCommas(products.price)} 원</ProductPrice>}
-          <DetailCount products={products} />
-        </ProductInfo>
-      </DetailBox>
+      {products.map(el => (
+        <DetailBox key={el.id}>
+          <ProductImage>
+            <img src={el.attatchmentUrl} alt="" />
+          </ProductImage>
+          <ProductInfo>
+            <ProductTitle>{el.title}</ProductTitle>
+            {el.price > 0 && <ProductPrice>{priceCommas(el.price)} 원</ProductPrice>}
+            <DetailCount />
+          </ProductInfo>
+        </DetailBox>
+      ))}
+      
     </DetailWrap>
     </div>
   )

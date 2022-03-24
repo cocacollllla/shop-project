@@ -32,11 +32,17 @@ const FormLayout = ({sign, title, inputData}) => {
             displayName: signInfo.name
           })
         });
-        await dbService.collection("users").add({displayName: signInfo.name, email: signInfo.email});
+        // let userUID = authService.currentUser;
+        // await dbService.collection("users").add({uid: userUID.uid, displayName: signInfo.name, email: signInfo.email, favorite: []});
+        
         // dispatch(usersActions.replaceData({displayName: signInfo.name, email: signInfo.email}));
         // await authService.signOut();
+        // navigate(`/sign/done`);
       } else {
-        await authService.signInWithEmailAndPassword(signInfo.email, signInfo.password);
+        await authService.signInWithEmailAndPassword(signInfo.email, signInfo.password).then(userCredential => {
+          // console.log(userCredential.user);
+          // dispatch(usersActions.replaceData({uid: userCredential.user.uid, displayName: userCredential.user.displayName, email: userCredential.user.email}));
+        });
         
       }
     } catch(error) {

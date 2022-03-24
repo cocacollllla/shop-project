@@ -29,6 +29,9 @@ const Sub = () => {
   
   useEffect(() => {
     getItems();
+    return() => {
+
+    }
   }, [location]);
 
   return (

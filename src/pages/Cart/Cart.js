@@ -11,11 +11,11 @@ import { dbService } from '../../myFirebase';
 const Cart = () => {
   const dispatch = useDispatch();
   const item = useSelector(state => state.cart);
-  const loginUser = useSelector(state => state.users[0]);
+  const user = useSelector(state => state.users);
 
 
 useEffect(() => {
-  dispatch(getCartData(loginUser.uid));
+  dispatch(getCartData(user.uid));
   return () => {
 
   }

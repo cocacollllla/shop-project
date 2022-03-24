@@ -2,13 +2,24 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const usersSlice = createSlice({
   name: 'users',
-  initialState: [],
+  initialState: null,
   reducers: {
     replaceData: (state, action) => 
       // state.push({...action.payload})
-      state = [action.payload]
+      state = action.payload
     ,
-    delete: (state, action) => 
+    plusfav: (state, action) => {
+      const existingItem = state.find(el => el.id === action.payload);
+      existingItem.quantity++;
+      existingItem.totalPrice = existingItem.quantity * existingItem.price;
+      
+    },
+    minusfav: (state, action) => {
+      const existingItem = state.find(el => el.id === action.payload);
+      existingItem.quantity--;
+      existingItem.totalPrice = existingItem.quantity * existingItem.price;
+    },
+    deletefav: (state, action) => 
       state.filter(el => el.id !== action.payload)
     ,
   }
