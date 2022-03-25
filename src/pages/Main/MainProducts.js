@@ -19,7 +19,7 @@ const MainProducts = ( {products, option  }) => {
   return (
     <>
       {productsArr.map(product => (
-        <MainItem key={product.id} onClick={() => navigate(`/${option}/detail/${product.id}`)}>
+        <MainItem key={product.id} onClick={() => navigate(`/${option}/detail/${product.docId}`)}>
           <MainImage>
             <img src={product.attatchmentUrl} alt="" />
           </MainImage>

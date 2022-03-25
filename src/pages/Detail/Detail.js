@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useLinkClickHandler, useParams } from 'react-router-dom';
 import { dbService } from '../../myFirebase';
 import { priceCommas, MAINPRODUCTS } from '../../data/Data';
 import DetailCount from './DetailCount';
@@ -8,15 +8,17 @@ import SubListMenu from '../../components/SubListMenu';
 import media from '../../styles/media';
 import styled from 'styled-components';
 import { productsActions } from '../../store/products-slice';
+import ProductComments from './ProductComments';
 
 const Detail = () => {
-  // const [products, setProducts] = useState([]);
+  const [currentID, setCurrentId] = useState(2);
   const params = useParams();
   const dispatch = useDispatch();
   const products = useSelector(state => state.products);
+  const user = useSelector(state => state.users);
 
   let currentMenu = params.menu;
-  const productId = parseInt(params.id);
+  const productId = params.id;
 
 
   // const getFilterIdItems = async () => {
@@ -27,38 +29,64 @@ const Detail = () => {
   // };
 
   useEffect(() => {
-    dbService.collection('products').where('id', '==', productId).onSnapshot((querySnapshot) => {
-      const Product = querySnapshot.docs.map(doc => ({ docID:doc.id, ...doc.data()}));
-      dispatch(productsActions.replaceData(Product));
+    dbService.collection('products').doc(productId).get().then((doc) => {
+      if (doc.exists) {
+        dispatch(productsActions.replaceData(doc.data()));
+      }
+      
     });
-  }, [dispatch]);
+  }, []);
 
-  // console.log(propro);
+  const clickHandler = (id) => {
+    setCurrentId(id);
+  }
+
+  console.log(products);
+
+  const tabTitle = ['상품정보', '상품후기'];
+  const tabContents = {
+    1: <div>{products !== null && products.contents}</div>,
+    2: <ProductComments user={user} productId={productId} />
+  }; 
 
 
   return (
     <div>
-    <DetailWrap>
-      <SubListMenu list={MAINPRODUCTS} currentMenu={currentMenu} />
-      {products.map(el => (
-        <DetailBox key={el.id}>
-          <ProductImage>
-            <img src={el.attatchmentUrl} alt="" />
-          </ProductImage>
-          <ProductInfo>
-            <ProductTitle>{el.title}</ProductTitle>
-            {el.price > 0 && <ProductPrice>{priceCommas(el.price)} 원</ProductPrice>}
-            <DetailCount />
-          </ProductInfo>
-        </DetailBox>
-      ))}
+      <DetailWrap>
+        <SubListMenu list={MAINPRODUCTS} currentMenu={currentMenu} />
+        {products !== null && 
+          <DetailBox>
       
-    </DetailWrap>
+            <DetailInfo>
+              <ProductImage>
+                <img src={products.attatchmentUrl} alt="" />
+              </ProductImage>
+              <ProductInfo>
+                <ProductTitle>{products.title}</ProductTitle>
+                {products.price > 0 && <ProductPrice>{priceCommas(products.price)} 원</ProductPrice>}
+                <DetailCount user={user} />
+              </ProductInfo>
+            </DetailInfo>
+
+            <DetailContents>
+              <TabMenuTitle>
+                {tabTitle.map((el, idx) => (
+                  <li key={idx} onClick={() => clickHandler(idx + 1)}>{el}</li>
+                ))}
+              </TabMenuTitle>
+              <TabMenuContents>{tabContents[currentID]}</TabMenuContents>
+            </DetailContents>
+
+          </DetailBox>
+        }
+      </DetailWrap>
     </div>
   )
 }
 
 export default Detail;
+
+
 
 const DetailWrap = styled.div`
   max-width: ${(props) => props.theme.pcWidth};
@@ -76,6 +104,10 @@ const DetailWrap = styled.div`
 
 const DetailBox = styled.div`
   width: 100%;
+`;
+
+const DetailInfo = styled.div`
+  width: 100%;
   display:grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 3rem 2rem;
@@ -86,6 +118,29 @@ const DetailBox = styled.div`
     display: block;
   }
 `;
+
+const DetailContents = styled.div`
+ 
+`;
+
+const TabMenuTitle = styled.ul`
+  display: flex;
+  justify-content: flex-start;
+
+  li {
+    padding: 2rem 4rem;
+  }
+`;
+
+const TabMenuContents = styled.div`
+  div {
+    text-align: center;
+  }
+`;
+
+
+
+
 
 const ProductImage = styled.div`
   ${media.mobile} {

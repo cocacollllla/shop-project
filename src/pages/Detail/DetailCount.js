@@ -11,11 +11,10 @@ import { productsActions } from '../../store/products-slice';
 import { favoriteFalse, favoriteTrue } from '../../store/products-actions';
 import { Navigate } from 'react-router-dom';
 
-const DetailCount = () => {
+const DetailCount = ({user}) => {
   const [count, setCount] = useState(1);
   const [cartProducts, setCartProducts] = useState([]);
-  const user = useSelector(state => state.users);
-  const products = useSelector(state => state.products[0]);
+  const products = useSelector(state => state.products);
   // const userInfo = [...user];
   // const useuse = userInfo.filter((el => el.id === products.id));
   const [heart, setHeart] = useState(false);
@@ -113,7 +112,7 @@ const DetailCount = () => {
   const totalPrice = products.price * count;
 
 console.log(user);
-console.log(heart);
+console.log(products);
   
   return (
     <>

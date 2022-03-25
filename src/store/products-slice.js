@@ -2,11 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const productsSlice = createSlice({
   name: 'products',
-  initialState: [],
+  initialState: null,
   reducers: {
     replaceData: (state, action) => 
       // state.push({...action.payload})
-      state = [...action.payload]
+      state = action.payload
     ,
     favoriteT: (state, action) => {
       // const existingItem = state.find(el => el.id === action.payload);

@@ -10,7 +10,7 @@ const SubListItems = ({posts, currentMenu}) => {
   return (
     <SubList>
       {posts && posts.map(product => (
-        <Items key={product.id} onClick={() => navigate(`/${currentMenu}/detail/${product.id}`)}>
+        <Items key={product.id} onClick={() => navigate(`/${currentMenu}/detail/${product.docId}`)}>
           <ItemImage><img src={product.attatchmentUrl} alt="" /></ItemImage>
           <ItemTitle>{product.title}</ItemTitle>
           <ItemPrice>{priceCommas(product.price)} 원</ItemPrice>

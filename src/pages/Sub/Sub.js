@@ -17,12 +17,12 @@ const Sub = () => {
   const getItems = async () => {
     if(currentMenu === 'all') {
        dbService.collection('products').onSnapshot(snapshot => {
-        const getAllItems = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
+        const getAllItems = snapshot.docs.map(doc => ({ docId:doc.id, ...doc.data()}));
         setProducts(getAllItems);
       });
     } else {
       const getOptionItems = await dbService.collection('products').where('option', '==', currentMenu).get();
-      const optionItems = getOptionItems.docs.map((doc) => doc.data());
+      const optionItems = getOptionItems.docs.map(doc => ({ docId:doc.id, ...doc.data()}));
       setProducts(optionItems);
     }
   }
@@ -33,6 +33,8 @@ const Sub = () => {
 
     }
   }, [location]);
+
+  console.log(products);
 
   return (
     <SubListWrap>
