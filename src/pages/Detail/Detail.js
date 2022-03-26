@@ -45,7 +45,7 @@ const Detail = () => {
 
   const tabTitle = ['상품정보', '상품후기'];
   const tabContents = {
-    1: <div>{products !== null && products.contents}</div>,
+    1: <div className="contentsBox">{products !== null && products.contents}</div>,
     2: <ProductComments user={user} productId={productId} />
   }; 
 
@@ -133,7 +133,7 @@ const TabMenuTitle = styled.ul`
 `;
 
 const TabMenuContents = styled.div`
-  div {
+  .contentsBox {
     text-align: center;
   }
 `;
