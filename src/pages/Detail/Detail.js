@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLinkClickHandler, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { dbService } from '../../myFirebase';
 import { priceCommas, MAINPRODUCTS } from '../../data/Data';
 import DetailCount from './DetailCount';
@@ -11,7 +11,8 @@ import { productsActions } from '../../store/products-slice';
 import ProductComments from './ProductComments';
 
 const Detail = () => {
-  const [currentID, setCurrentId] = useState(2);
+  const [currentId, setCurrentId] = useState(1);
+  const [prod, setProd] = useState(null);
   const params = useParams();
   const dispatch = useDispatch();
   const products = useSelector(state => state.products);
@@ -29,11 +30,15 @@ const Detail = () => {
   // };
 
   useEffect(() => {
-    dbService.collection('products').doc(productId).get().then((doc) => {
-      if (doc.exists) {
-        dispatch(productsActions.replaceData(doc.data()));
-      }
-      
+    // dbService.collection('products').doc(productId).get().then((doc) => {
+    //   if (doc.exists) {
+    //     dispatch(productsActions.replaceData({docID:doc.id, ...doc.data()}));
+    //   }
+    // });
+    dbService.collection('products').doc(productId)
+    .onSnapshot((doc) => {
+      dispatch(productsActions.replaceData({docID:doc.id, ...doc.data()}));
+      setProd({docID:doc.id, ...doc.data()});
     });
   }, []);
 
@@ -41,13 +46,14 @@ const Detail = () => {
     setCurrentId(id);
   }
 
-  console.log(products);
 
   const tabTitle = ['상품정보', '상품후기'];
   const tabContents = {
     1: <div className="contentsBox">{products !== null && products.contents}</div>,
     2: <ProductComments user={user} productId={productId} />
   }; 
+
+  console.log(products);
 
 
   return (
@@ -64,17 +70,17 @@ const Detail = () => {
               <ProductInfo>
                 <ProductTitle>{products.title}</ProductTitle>
                 {products.price > 0 && <ProductPrice>{priceCommas(products.price)} 원</ProductPrice>}
-                <DetailCount user={user} />
+                {prod !== null && <DetailCount user={user} products={prod} />}
               </ProductInfo>
             </DetailInfo>
 
             <DetailContents>
               <TabMenuTitle>
                 {tabTitle.map((el, idx) => (
-                  <li key={idx} onClick={() => clickHandler(idx + 1)}>{el}</li>
+                  <li key={idx} onClick={() => clickHandler(idx + 1)} className={currentId === idx + 1 ? 'onTabMenu' : ''}>{el}</li>
                 ))}
               </TabMenuTitle>
-              <TabMenuContents>{tabContents[currentID]}</TabMenuContents>
+              <TabMenuContents>{tabContents[currentId]}</TabMenuContents>
             </DetailContents>
 
           </DetailBox>
@@ -120,19 +126,43 @@ const DetailInfo = styled.div`
 `;
 
 const DetailContents = styled.div`
- 
+  margin-top: 3rem;
 `;
 
 const TabMenuTitle = styled.ul`
   display: flex;
   justify-content: flex-start;
 
+  .onTabMenu {
+    background-color: #fff;
+    border-bottom: 1px solid transparent;
+    margin-bottom: -1px;
+    color: ${(props) => props.theme.mainColor};
+    font-weight: 500;
+  }
+
   li {
-    padding: 2rem 4rem;
+    width: 200px;
+    ${media.tablet} {
+      width: 50%;
+    }
+    padding: 1.3rem 0;
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    text-align: center;
+    cursor: pointer;
+
+    &:first-child {
+      border-left: 1px solid #ddd;
+    }
+
   }
 `;
 
 const TabMenuContents = styled.div`
+  border-top: 1px solid #ddd;
+  padding-top: 3rem;
+
   .contentsBox {
     text-align: center;
   }

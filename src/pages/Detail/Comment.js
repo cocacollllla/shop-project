@@ -2,14 +2,9 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import { dbService } from '../../myFirebase';
 
-const Comment = ({comments, user}) => {
+const Comment = ({comments, user, isActive, changeActiveTab}) => {
   const [isModify, setIsModify] = useState(false);
   const [modifyText, setModifyText] = useState('');
-  const [activeTab, setActiveTab] = useState(0);
-
-  const changeActiveTab = id => {
-    setActiveTab(id);
-  };
 
   const modifyTextChange = (e) => {
     setModifyText(e.target.value);
@@ -30,28 +25,35 @@ const Comment = ({comments, user}) => {
     
   }
 
-  console.log(modifyText);
+  const profileImage = () => {
+    if(comments.user_pic !== null) {
+      return <img src={comments.user_pic} alt="프로필이미지" />
+    } else {
+      return <img src='/assets/default_profile.png' alt="프로필이미지" />
+    }
+  }
+  
 
   return (
-    <CommentList isActive={activeTab === comments.id} onClick={() => changeActiveTab(comments.id)}>
-            <CommentUserInfo>
-              <img src={comments.user_pic} alt="" />
-              <span>{comments.user_name}</span>
-              {user !== null && 
-                <CommentBtn>
-                  <div onClick={() => setIsModify(!isModify)}>수정</div>
-                  <div onClick={commentDelete}>삭제</div>
-                </CommentBtn>
-              }
-            </CommentUserInfo>
-            <CommentContents>
-              {isModify ? 
-                <>
-                  <textarea defaultValue={comments.contents} onChange={modifyTextChange}></textarea>
-                  <div onClick={modifyDone}>완료</div>
-                </> : comments.contents}
-            </CommentContents>
-          </CommentList>
+    <CommentList  onClick={changeActiveTab} isActive={isActive}>
+      <CommentUserInfo>
+        {profileImage()}
+        <span>{comments.user_name}</span>
+        {user.uid === comments.user_id && 
+          <CommentBtn>
+            <div onClick={() => setIsModify(!isModify)}>수정</div>
+            <div onClick={commentDelete}>삭제</div>
+          </CommentBtn>
+        }
+      </CommentUserInfo>
+      <CommentContents>
+        {isModify ? 
+          <>
+            <textarea defaultValue={comments.contents} onChange={modifyTextChange}></textarea>
+            <div onClick={modifyDone}>완료</div>
+          </> : comments.contents}
+      </CommentContents>
+    </CommentList>
   )
 }
 
@@ -65,6 +67,7 @@ const CommentList = styled.div`
   max-height: ${props => (props.isActive ? '100%' : '114px')};
   overflow: hidden;
   position: relative;
+  cursor: pointer;
 
   &:after {
     content:'';

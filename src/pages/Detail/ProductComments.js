@@ -10,10 +10,17 @@ const ProductComments = ({user, productId}) => {
 
   const [comment, setComment] = useState([]);
   const [commentValue, setCommentValue] = useState('');
+  const [activeTab, setActiveTab] = useState(0);
+
+  const changeActiveTab = id => {
+    setActiveTab(id);
+  };
+
 
   useEffect(() => {
     dbService.collection('comment').where('products', "==", productId).onSnapshot((querySnapshot) => {
       const getComment = querySnapshot.docs.map(doc => ({ docId:doc.id, ...doc.data()}));
+      getComment.sort((a,b) => b.date - a.date);
       setComment(getComment);
     });
   }, []);
@@ -24,6 +31,7 @@ const ProductComments = ({user, productId}) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    setCommentValue('');
 
     if(user !== null) {
       const commentObj = {
@@ -33,7 +41,7 @@ const ProductComments = ({user, productId}) => {
         user_pic: user.photoURL, 
         contents: commentValue, 
         id:Date.now(), 
-        date: date.format('YYYY-MM-DD')
+        date: + new Date()
       }
       try {
         dbService.collection("comment").add(commentObj);
@@ -49,19 +57,22 @@ const ProductComments = ({user, productId}) => {
 
 
 
-
   return (
     <div>
       <CommentForm onSubmit={onSubmit}>
-        <textarea name="contents" onChange={handleChange} disabled={user === null ? true : false} placeholder={user === null ? '로그인 하신 뒤 작성할 수 있습니다.' : ''}></textarea>
+        <textarea name="contents" onChange={handleChange} value={commentValue} disabled={user === null ? true : false} placeholder={user === null ? '로그인 하신 뒤 작성할 수 있습니다.' : ''}></textarea>
         <input type="submit" value="작성" />
       </CommentForm>
 
       {/* 댓글목록 */}
       <CommentListWrap>
-        {comment.map(el => (
-          <Comment key={el.id} comments={el} user={user} />
-        ))}
+        {comment.length === 0 ? 
+          <p>상품후기가 없습니다.</p> : 
+          comment.map(el => (
+            <Comment key={el.id} comments={el} user={user} isActive={activeTab === el.id}
+            changeActiveTab={() => changeActiveTab(el.id)} />
+          ))
+        }
       </CommentListWrap>
 
     </div>
@@ -95,6 +106,10 @@ const CommentForm = styled.form`
 `;
 
 const CommentListWrap = styled.div`
+  p {
+    margin-top: 4rem;
+    text-align: center;
 
+  }
 `;
 

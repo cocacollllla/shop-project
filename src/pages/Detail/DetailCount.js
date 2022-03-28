@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { priceCommas } from '../../data/Data';
+import { useParams } from 'react-router-dom';
 import { dbService } from '../../myFirebase';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { IoIosHeartEmpty, IoIosHeart } from "react-icons/io";
@@ -11,14 +12,17 @@ import { productsActions } from '../../store/products-slice';
 import { favoriteFalse, favoriteTrue } from '../../store/products-actions';
 import { Navigate } from 'react-router-dom';
 
-const DetailCount = ({user}) => {
+const DetailCount = ({user,  products}) => {
   const [count, setCount] = useState(1);
   const [cartProducts, setCartProducts] = useState([]);
-  const products = useSelector(state => state.products);
   // const userInfo = [...user];
   // const useuse = userInfo.filter((el => el.id === products.id));
   const [heart, setHeart] = useState(false);
   const dispatch = useDispatch();
+
+  const params = useParams();
+
+  const productId = params.id;
 
   // const handleClickCart = () => {
 
@@ -47,8 +51,9 @@ const DetailCount = ({user}) => {
     const data = {uid: user.uid, id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
     const cartItem = cartProducts.find(el => el.id === data.id);
 
-    if(cartItem !== null) { 
+    if(cartItem !== undefined) { 
       alert('장바구니에 존재하는 상품입니다.');
+      console.log(cartItem);
     } else {
       dbService.collection('test_cart').add(data);
       alert('선택한 상품을 장바구니에 담았습니다.')
@@ -111,8 +116,11 @@ const DetailCount = ({user}) => {
 
   const totalPrice = products.price * count;
 
-console.log(user);
-console.log(products);
+// console.log(user);
+console.log(products.id);
+console.log(cartProducts);
+// console.log(heart);
+// console.log(productId);
   
   return (
     <>

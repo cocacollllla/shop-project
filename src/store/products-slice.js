@@ -13,14 +13,14 @@ const productsSlice = createSlice({
       // existingItem.quantity++;
       // existingItem.totalPrice = existingItem.quantity * existingItem.price;
       // const existingItem = state.find(el => el.docID === action.payload.docID);
-      state[0].favorite.push(action.payload);
+      state.favorite.push(action.payload);
       console.log(action.payload);
     
     },
     favoriteF: (state, action) => {
       // state[0].favorite.push(action.payload.userID)
-      state[0].favorite.filter(gg =>  gg !== action.payload)
-      console.log(action.payload)
+      state.favorite.filter(gg => gg !== action.payload)
+      console.log(action.payload);
 
     },
     deletefav: (state, action) => 
