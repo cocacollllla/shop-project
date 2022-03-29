@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { priceCommas} from '../../data/Data';
-import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
+import { AiOutlineMinusCircle, AiOutlinePlusCircle, AiOutlineCheckCircle, AiFillCheckCircle } from "react-icons/ai";
 import { MdClose } from "react-icons/md";
 import { getCartData, cartQuantityPlus, cartQuantityMinus, cartDelete } from '../../store/cart-actions';
 import media from '../../styles/media';
@@ -12,23 +12,27 @@ const Cart = () => {
   const dispatch = useDispatch();
   const item = useSelector(state => state.cart);
   const user = useSelector(state => state.users);
+  const [checkItems, setCheckItems] = useState(item);
+
+  console.log(checkItems);
+
+// useEffect(() => {
+//   dispatch(getCartData(user.uid));
+//   return () => {
+
+//   }
+// }, [dispatch]);
 
 
-useEffect(() => {
-  dispatch(getCartData(user.uid));
-  return () => {
-
-  }
-}, [dispatch]);
 
 
-const addClickHandler = (docID, id, quantity, price) => {
-  dispatch(cartQuantityPlus(docID, id, quantity, price));
+const addClickHandler = (itm) => {
+  dispatch(cartQuantityPlus(itm.docID, itm.id, itm.quantity, itm.price));
 }
 
-const minusClickHandler = (docID, id, quantity, price) => {
-  if(quantity > 1) {
-    dispatch(cartQuantityMinus(docID, id, quantity, price))
+const minusClickHandler = (itm) => {
+  if(itm.quantity > 1) {
+    dispatch(cartQuantityMinus(itm.docID, itm.id, itm.quantity, itm.price))
   } else {
     alert('최소수량 입니다.')
   }
@@ -43,9 +47,26 @@ const removeClickHandler = (docID, id) => {
 }
 
 
-const result = item.reduce((acc, current) => acc + current.totalPrice, 0);
+const result = checkItems.reduce((acc, current) => acc + current.totalPrice, 0);
 
-console.log(item);
+const handleAllCheck = checked => {
+  if (checked) {
+    const idArray = [];
+    item.forEach(el => idArray.push(el));
+    setCheckItems(idArray);
+  } else {
+    setCheckItems([]);
+  }
+};
+
+const handleSingleCheck = (checked, itm) => {
+  if (checked) {
+    setCheckItems([...checkItems, itm]);
+  } else {
+    setCheckItems(checkItems.filter(el => el.docID !== itm.docID));
+  }
+};
+
 
 
   return (
@@ -54,17 +75,43 @@ console.log(item);
         {item.length === 0 ?
         <NoData>장바구니에 상품이 없습니다.</NoData> :
         <>
+          <div className="tos_chx_all">
+            <label htmlFor="checkAll">
+              <CheckIcon>{checkItems.length === item.length ? <AiFillCheckCircle /> : <AiOutlineCheckCircle className="offCheck" />}</CheckIcon>
+              <input
+                id="checkAll"
+                type="checkbox"
+                name="checkAll"
+                onChange={e => handleAllCheck(e.target.checked)}
+                checked={checkItems.length === item.length}
+              />
+              <span>전체선택</span>
+            </label>
+          </div>
+
           {item && item.map((itm, idx) => (
             <ItemWrap key={idx}>
+
+              <label htmlFor={itm.docID}>
+                <CheckIcon>{checkItems.find(el => el.docID === itm.docID) !== undefined ? <AiFillCheckCircle /> : <AiOutlineCheckCircle className="offCheck" />}</CheckIcon>
+                <input
+                  id={itm.docID}
+                  type="checkbox"
+                  onChange={e => handleSingleCheck(e.target.checked, itm)}
+                  checked={checkItems.find(el => el.docID === itm.docID) !== undefined}
+                />
+              </label>
+            
+
               <ImgTitle>
                 <Itemimg><img src={itm.image} alt="d" /></Itemimg>
                 <CartTitle>{itm.title}</CartTitle>
               </ImgTitle>
               <QuantityBox>
                 <CartQuantityBtn>
-                  <div onClick={() => minusClickHandler(itm.docID, itm.id, itm.quantity, itm.price)}><AiOutlineMinusCircle /></div>
+                  <div onClick={() => minusClickHandler(itm)}><AiOutlineMinusCircle /></div>
                   <span>{itm.quantity}</span>
-                  <div onClick={() => addClickHandler(itm.docID, itm.id, itm.quantity, itm.price)}><AiOutlinePlusCircle /></div>
+                  <div onClick={() => addClickHandler(itm)}><AiOutlinePlusCircle /></div>
                 </CartQuantityBtn>
                 <CartPrice>{priceCommas(itm.totalPrice+'')} 원</CartPrice>
               </QuantityBox>
@@ -94,16 +141,27 @@ const DetailWrap = styled.div`
     margin: 5rem auto 5rem auto;
   }
   padding: 3rem 1rem;
+
+  input[type='checkbox'] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
 `;
 
 const ItemWrap = styled.div`
   width: 100%;
   padding: 1rem;
   display: grid;
-  grid-template-columns: 3fr 2fr 60px ;
+  grid-template-columns: 60px 3fr 2fr 60px ;
   ${media.tablet} {
     padding: 1rem 0;
-     grid-template-columns: 2fr 2fr 60px ;
+     grid-template-columns: 60px 2fr 2fr 60px ;
   }
   ${media.mobile} {
     display: block;
@@ -182,6 +240,18 @@ const CartQuantityBtn = styled.div`
   }
   span {
     font-weight: 500;
+  }
+  
+`;
+
+
+const CheckIcon = styled.span`
+  svg {
+    font-size: 1.2rem;
+  }
+    
+  .offCheck {
+    fill: #ddd;
   }
   
 `;

@@ -52,14 +52,14 @@ const Header = ({isLoggedIn}) => {
     
   // };
 
-  useEffect(() => {
-    if(user !== null) {
-      dispatch(getCartData(user.uid));
-    }
-    return () => {
+  // useEffect(() => {
+  //   if(user !== null) {
+  //     dispatch(getCartData(user.uid));
+  //   }
+  //   return () => {
   
-    }
-  }, [dispatch]);
+  //   }
+  // }, [dispatch]);
 
   const goToCart = () => {
     let sign = 'signin';
