@@ -22,6 +22,11 @@ const cartSlice = createSlice({
     delete: (state, action) => 
       state.filter(el => el.id !== action.payload)
     ,
+    singleCheck: (state, action) => 
+      state.map((el) => el.id === action.payload ? { ...el, isChecked: !el.isChecked } : el )
+    ,
+    allCheck: (state, action) => 
+      state.map((el) => action.payload === true ? { ...el, isChecked: true } : { ...el, isChecked: false }),
   }
 });
 

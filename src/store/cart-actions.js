@@ -32,7 +32,7 @@ export const getData = () => {
 export const getCartData = (uid) => { 
   return (dispatch) => {
     dbService.collection('test_cart').where('uid', "==", uid).onSnapshot((querySnapshot) => {
-      const getProduct = querySnapshot.docs.map(doc => ({ docID:doc.id, ...doc.data()}));
+      const getProduct = querySnapshot.docs.map(doc => ({ docID:doc.id, isChecked: true,  ...doc.data()}));
       dispatch(cartActions.replaceData(getProduct));
     });
   }
