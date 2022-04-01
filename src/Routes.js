@@ -15,6 +15,7 @@ import Footer from './components/Footer';
 import styled from 'styled-components';
 import Signup from './Auth/Signup';
 import EditProfile from './Auth/EditProfile';
+import Order from './pages/Cart/Order';
 
 const Routing = ({ isLoggedIn }) => {
   console.log(isLoggedIn);
@@ -31,6 +32,7 @@ const Routing = ({ isLoggedIn }) => {
             <Route path={"/sign/edit"} element={<EditProfile />} />
             <Route path={"/:menu/detail/:id"} element={<Detail />} />
             <Route path={"/cart"} element={<Cart />} />
+            <Route path={"/order"} element={<Order />} />
             <Route path={"/:option"} element={<Sub />} />
             <Route path={"/upload"} element={<Upload />} />
             <Route path={"/notice/:state"} element={<NoticeUpload />} />

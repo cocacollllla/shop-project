@@ -1,11 +1,15 @@
 import React from 'react';
+import { useLocation } from 'react-router';
 import styled from 'styled-components';
 import media from '../styles/media';
 import { FaTwitterSquare, FaFacebookSquare, FaInstagramSquare } from "react-icons/fa";
 
 const Footer = () => {
+  const location = useLocation();
+  const path = location.pathname;
+
   return (
-    <FooterWrap>
+    <FooterWrap path={path === '/'}>
       <FooterBox>
         <FooterInfoWrap>
           <FooterInfo>
@@ -58,6 +62,9 @@ const FooterWrap = styled.div`
   padding: 1rem;
   background-color: #f3f3f3;
 
+  ${media.mobile} {
+    display: ${props => props.path ? "block" : "none"};
+  }
 `;
 
 const FooterBox = styled.div`
