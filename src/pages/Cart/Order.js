@@ -10,8 +10,7 @@ const Order = () => {
 
   const doneList = item.filter(list => list.isChecked === true);
 
-  console.log(item);
-  console.log(user);
+
 
   return (
     <OrderWrap>
@@ -114,7 +113,7 @@ const ProductPrice = styled.div`
 
 const Orderer = styled.div`
   padding: 1rem;
-  
+
   div {
     padding: 1rem 0 0 0;
     

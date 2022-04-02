@@ -27,11 +27,12 @@ const FormLayout = ({sign, title, inputData}) => {
     e.preventDefault();
     try {
       if(sign === 'signup') {
-        await authService.createUserWithEmailAndPassword(signInfo.email, signInfo.password).then(result => {
-          result.user.updateProfile({
-            displayName: signInfo.name
-          })
+        const {user} = await authService.createUserWithEmailAndPassword(signInfo.email, signInfo.password);
+        await user.updateProfile({
+          displayName: signInfo.name
         });
+        dispatch(usersActions.replaceData({uid: user.uid, displayName: user.displayName, email: user.email, photoURL: user.photoURL}));
+
         // let userUID = authService.currentUser;
         // await dbService.collection("users").add({uid: userUID.uid, displayName: signInfo.name, email: signInfo.email, favorite: []});
         

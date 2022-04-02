@@ -7,8 +7,8 @@ import { usersActions } from '../store/users-slice';
 import media from '../styles/media';
 import styled from 'styled-components';
 
-const EditProfile = () => {
-  const [attatchment,  setAttatchment] = useState('');
+const EditProfile = ({refreshUser}) => {
+  const [attatchment,  setAttatchment] = useState(null);
   const [editName,  setEditName] = useState('');
   const user = useSelector(state => state.users);
   const navigate = useNavigate();
@@ -39,12 +39,14 @@ const EditProfile = () => {
     e.preventDefault();
 
     try {
-      let photoURL = '';
-      if(attatchment !== ''){
+      let photoURL = null;
+      if(attatchment !== null && !attatchment.includes('https')){
         const attatchmentRef = storageService.ref().child(`board/${uuidv4()}`);
         const response = await attatchmentRef.putString(attatchment, 'data_url');
         photoURL = await response.ref.getDownloadURL();
-      }
+      } else if(attatchment !== null && attatchment.includes('https')) {
+        photoURL = attatchment;
+      };
 
         if(user.displayName !== editName || user.photoURL !== attatchment) {
           await authService.currentUser.updateProfile({
@@ -54,6 +56,8 @@ const EditProfile = () => {
             setAttatchment(photoURL);
             dispatch(usersActions.replaceData({uid: user.uid, displayName: editName, email: user.email, photoURL: photoURL === '' ? null : photoURL}));
           });
+        } else {
+          navigate(-1)
         }
 
     } catch(error) {
@@ -61,9 +65,8 @@ const EditProfile = () => {
     } 
   }
 
-
   const handleClickClearImage = () => {
-    setAttatchment('');
+    setAttatchment(null);
   }
 
   return (
