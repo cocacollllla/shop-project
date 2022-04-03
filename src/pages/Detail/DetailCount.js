@@ -64,7 +64,7 @@ const DetailCount = ({user,  products}) => {
 
   useEffect(() => {
     if(user !== null) { 
-      if(products.favorite.indexOf(user.uid) < 0) {
+      if(!products.favorite.includes(user.uid)) {
         setHeart(false)
       } else {
         setHeart(true)
@@ -93,7 +93,7 @@ const DetailCount = ({user,  products}) => {
     // dispatch(plusFav(loginUser.docID, products.id));
 
     if(user !== null) {
-      if(products.favorite.indexOf(user.uid) < 0) {
+      if(!products.favorite.includes(user.uid)) {
         console.log('없으니까 넣을게');
         let fav = products.favorite;
         dispatch(favoriteTrue(products.docID, user.uid, fav));
