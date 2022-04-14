@@ -22,6 +22,13 @@ ${reset}
     text-decoration: none;
     color: inherit;
   }
+
+  input[type='text'] {
+    width: 100%;
+    padding: .5rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
 `;
 
 export const FlexContainer = styled.div`

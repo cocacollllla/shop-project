@@ -21,26 +21,15 @@ const Detail = () => {
   let currentMenu = params.menu;
   const productId = params.id;
 
-
-  // const getFilterIdItems = async () => {
-  //   const getProduct = await dbService.collection('products').where('id', '==', productId).get();
-  //     const Product = getProduct.docs.map(doc => ({ docID:doc.id, ...doc.data()}));
-  //     // setProducts(Product[0]);
-  //     dispatch(productsActions.replaceData(Product));
-  // };
-
   useEffect(() => {
-    // dbService.collection('products').doc(productId).get().then((doc) => {
-    //   if (doc.exists) {
-    //     dispatch(productsActions.replaceData({docID:doc.id, ...doc.data()}));
-    //   }
-    // });
-    dbService.collection('products').doc(productId)
-    .onSnapshot((doc) => {
+    const getProduct = dbService.collection('products').doc(productId).onSnapshot((doc) => {
       dispatch(productsActions.replaceData({docID:doc.id, ...doc.data()}));
       setProd({docID:doc.id, ...doc.data()});
     });
-  }, []);
+    return () => {
+      getProduct();
+    }
+  }, [productId, dispatch]);
 
   const clickHandler = (id) => {
     setCurrentId(id);
@@ -52,8 +41,6 @@ const Detail = () => {
     1: <div className="contentsBox">{products !== null && products.contents}</div>,
     2: <ProductComments user={user} productId={productId} />
   }; 
-
-  console.log(products);
 
 
   return (
@@ -165,6 +152,8 @@ const TabMenuContents = styled.div`
 
   .contentsBox {
     text-align: center;
+    line-height: 30px;
+    white-space: pre-wrap;
   }
 `;
 

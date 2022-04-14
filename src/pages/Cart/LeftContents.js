@@ -1,5 +1,6 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
+import { useNavigate} from 'react-router-dom';
 import { cartActions } from '../../store/cart-slice';
 import { priceCommas} from '../../data/Data';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle, AiOutlineCheckCircle, AiFillCheckCircle } from "react-icons/ai";
@@ -9,6 +10,7 @@ import media from '../../styles/media';
 import styled from 'styled-components';
 
 const LeftContents = ({doneList, item}) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const addClickHandler = (docID, id, quantity, price) => {
@@ -40,6 +42,7 @@ const LeftContents = ({doneList, item}) => {
     dispatch(cartActions.singleCheck(id));
   };
 
+
   return (
     <LeftContentsWrap>
       <CheckAll>
@@ -70,7 +73,7 @@ const LeftContents = ({doneList, item}) => {
             
           <TitleQuantity>
             <ImgTitle>
-              <Itemimg><img src={itm.image} alt="제품이미지" /></Itemimg>
+              <Itemimg onClick={() => {navigate(`/${itm.option}/detail/${itm.productID}`)}}><img src={itm.image} alt="제품이미지" /></Itemimg>
               <CartTitle>{itm.title}</CartTitle>
             </ImgTitle>
             <QuantityBox>
@@ -96,8 +99,6 @@ const LeftContentsWrap = styled.div`
   width: 100%;
 `;
 
-
-
 const ItemWrap = styled.div`
   width: 100%;
   padding: 1rem;
@@ -110,9 +111,6 @@ const ItemWrap = styled.div`
   ${media.tablet} {
     padding: 1rem 0;
   }
-
- 
-
 `;
 
 
@@ -142,6 +140,7 @@ const Itemimg = styled.div`
   height: 70px;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 
   img {
     position: absolute;

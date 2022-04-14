@@ -1,61 +1,37 @@
 import React, {useState, useEffect} from 'react';
-import { priceCommas } from '../../data/Data';
-import { useParams } from 'react-router-dom';
+import { useDispatch} from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { dbService } from '../../myFirebase';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { IoIosHeartEmpty, IoIosHeart } from "react-icons/io";
+import { priceCommas } from '../../data/Data';
 import media from '../../styles/media';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import firebase from "firebase/compat/app";
-import { productsActions } from '../../store/products-slice';
 import { favoriteFalse, favoriteTrue } from '../../store/products-actions';
-import { Navigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const DetailCount = ({user,  products}) => {
   const [count, setCount] = useState(1);
   const [cartProducts, setCartProducts] = useState([]);
-  // const userInfo = [...user];
-  // const useuse = userInfo.filter((el => el.id === products.id));
   const [heart, setHeart] = useState(false);
   const dispatch = useDispatch();
-
-  const params = useParams();
-
-  const productId = params.id;
-
-  // const handleClickCart = () => {
-
-  //   const data = {id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
-  //   // const cartItem = cartProducts.find(el => el.id === data.id);
-
-  //   // if(cartItem !== undefined) { 
-  //   //   alert('장바구니에 존재하는 상품입니다.');
-  //   // } else {
-  //     if(cartProducts !== undefined) {
-  //       dbService.collection('users').doc(cartProducts.id).update({
-  //         cart: firebase.firestore.FieldValue.arrayUnion(data)
-  //       });
-  //     }
-  //     alert('선택한 상품을 장바구니에 담았습니다.')
-  //   // }
-  // }
+  const navigate = useNavigate();
 
   const handleClickCart = () => {
-
     if(user === null) {
-      alert('로그인이 필요한 서비스 입니다.')
+      alert('로그인이 필요한 서비스 입니다.');
+      let sign = 'signin';
+      navigate(`/sign/${sign}`);
     } else {
 
     
-    const data = {uid: user.uid, id: products.id, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
+    const data = {uid: user.uid, id: products.id, productID: products.docID, image:products.attatchmentUrl, title: products.title, price: products.price, quantity: count, totalPrice: totalPrice};
     const cartItem = cartProducts.find(el => el.id === data.id);
 
     if(cartItem !== undefined) { 
       alert('장바구니에 존재하는 상품입니다.');
       console.log(cartItem);
     } else {
-      dbService.collection('test_cart').add(data);
+      dbService.collection('cart').add(data);
       alert('선택한 상품을 장바구니에 담았습니다.')
     }
   }
@@ -63,19 +39,8 @@ const DetailCount = ({user,  products}) => {
   }
 
   useEffect(() => {
-    if(user !== null) { 
-      if(!products.favorite.includes(user.uid)) {
-        setHeart(false)
-      } else {
-        setHeart(true)
-      }
-    // } else if(userInfo[0] === undefined) {
-    } else {
-      setHeart(false);
-    }
     if(user !== null) {
-
-      const getItem = dbService.collection('test_cart').where('uid', "==", user.uid).onSnapshot((querySnapshot) => {
+      const getItem = dbService.collection('cart').where('uid', "==", user.uid).onSnapshot((querySnapshot) => {
         const cartItemList = querySnapshot.docs.map(doc => ({ id:doc.id, ...doc.data()}));
         setCartProducts(cartItemList);
       });
@@ -84,23 +49,32 @@ const DetailCount = ({user,  products}) => {
       }
     }
     
-  }, []);
+  }, [user]);
+
+
+  useEffect(() => {
+    if(user !== null) { 
+      if(!products.favorite.includes(user.uid)) {
+        setHeart(false)
+      } else {
+        setHeart(true)
+      }
+    } else {
+      setHeart(false);
+    }
+    
+  }, [products.favorite, user]);
+
+
 
   const handleClickFavorite = () => {
-    // dbService.collection('users').doc(loginUser.docID).update({
-    //   favorite: 
-    // });
-    // dispatch(plusFav(loginUser.docID, products.id));
 
     if(user !== null) {
       if(!products.favorite.includes(user.uid)) {
-        console.log('없으니까 넣을게');
         let fav = products.favorite;
         dispatch(favoriteTrue(products.docID, user.uid, fav));
         setHeart(true);
       } else {
-
-        console.log('삭제할게');
         let fav = products.favorite;
         dispatch(favoriteFalse(products.docID, user.uid, fav));
         setHeart(false);
@@ -108,19 +82,14 @@ const DetailCount = ({user,  products}) => {
       }
     } else {
       alert('로그인이 필요한 서비스 입니다.');
+      let sign = 'signin';
+      navigate(`/sign/${sign}`);
     }
   }
 
 
-
-
   const totalPrice = products.price * count;
 
-// console.log(user);
-console.log(products.id);
-console.log(cartProducts);
-// console.log(heart);
-// console.log(productId);
   
   return (
     <>

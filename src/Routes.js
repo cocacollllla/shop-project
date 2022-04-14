@@ -14,11 +14,14 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import styled from 'styled-components';
 import Signup from './Auth/Signup';
-import EditProfile from './Auth/EditProfile';
+import EditProfile from './pages/Mypage/EditProfile';
 import Order from './pages/Cart/Order';
+import Favorite from './pages/Mypage/Favorite';
+import OrderList from './pages/Mypage/OrderList';
+import OrderListInfo from './pages/Mypage/OrderListInfo';
 
 const Routing = ({ isLoggedIn }) => {
-  console.log(isLoggedIn);
+
   return (
     <Router>
       <Container>
@@ -29,7 +32,10 @@ const Routing = ({ isLoggedIn }) => {
             {!isLoggedIn ? <Route path={"/sign/:sign"} element={<Signup />} />
              : <Route path={"/sign/:sign"} element={<Navigate to="/" />} />
             }
-            <Route path={"/sign/edit"} element={<EditProfile />} />
+            <Route path={"/mypage/account"} element={<EditProfile />} />
+            <Route path={"/mypage/favorite"} element={<Favorite />} />
+            <Route path={"/mypage/order"} element={<OrderList />} />
+            <Route path={"/mypage/order/:id"} element={<OrderListInfo />} />
             <Route path={"/:menu/detail/:id"} element={<Detail />} />
             <Route path={"/cart"} element={<Cart />} />
             <Route path={"/order"} element={<Order />} />

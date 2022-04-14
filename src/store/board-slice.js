@@ -5,7 +5,6 @@ const boardSlice = createSlice({
   initialState: [],
   reducers: {
     replaceData: (state, action) => 
-      // state.push(...action.payload)
       state = [...action.payload]
     ,
     delete: (state, action) => 

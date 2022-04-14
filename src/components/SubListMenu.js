@@ -4,18 +4,33 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 
-const SubListMenu = ({currentMenu, list}) => {
+const SubListMenu = ({currentMenu, list, mypageList}) => {
 
   const navigate = useNavigate();
+  
+  let mpList = null;
+  if(mypageList) {
+    mpList = Object.entries(mypageList);
+  }
 
+ 
   return (
     <SubListMenuWrap>
       <ul>
-        {list.map((optionName, idx) => (
-          <li key={idx} onClick={() => navigate(`/${optionName}`)} className={currentMenu === optionName ? 'isOnMenu' : null} >
-            <span>{optionName.toUpperCase()}</span>
-          </li>
-        ))}
+        {mypageList ? 
+          mpList.map((el, idx) => (
+            <li key={idx} onClick={() => navigate(`/mypage/${el[0]}`)} className={currentMenu === el[0] ? 'isOnMenu' : null} >
+              <span>{el[1]}</span>
+            </li>
+          ))
+        : 
+          list.map((optionName, idx) => (
+            <li key={idx} onClick={() => navigate(`/${optionName}`)} className={currentMenu === optionName ? 'isOnMenu' : null} >
+              <span>{optionName.toUpperCase()}</span>
+            </li>
+          ))
+        }
+        
       </ul>
     </SubListMenuWrap>
   )
@@ -24,6 +39,7 @@ const SubListMenu = ({currentMenu, list}) => {
 export default SubListMenu;
 
 const SubListMenuWrap = styled.div`
+  min-width: 180px;
   
   ${media.tablet} {
     width: 580px;
@@ -36,7 +52,6 @@ const SubListMenuWrap = styled.div`
   }
 
   ul {
-    padding-right: 6rem;
     ${media.tablet} {
       display: flex;
       justify-content: space-between;
@@ -45,21 +60,16 @@ const SubListMenuWrap = styled.div`
   }
 
   li {
-    // font-weight: 500;
-    ${media.mobile} {
-      font-size: .8rem;
-    }
-    
-    
-      padding: 1.5rem 1rem;
-   
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+
     ${media.tablet} {
       padding: 0;
     }
-    cursor: pointer;
     
-
-   
+    ${media.mobile} {
+      font-size: .8rem;
+    }
 
     &.isOnMenu span {
       position: relative;

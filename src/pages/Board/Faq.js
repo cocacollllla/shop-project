@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
 import { BOARDLIST, FAQCATEGORY } from '../../data/Data';
+import { SubWrap, SubBox } from '../../components/Style';
 import SubListMenu from '../../components/SubListMenu';
 import media from '../../styles/media';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
 import { getFaqData, getFaqFilterData, faqDelete } from '../../store/board-actions';
+import styled from 'styled-components';
 
 const Faq = () => {
   const faqList = useSelector(state => state.board);
@@ -34,9 +35,9 @@ const Faq = () => {
 
 
   return (
-    <NoticeWrap>
+    <SubWrap>
       <SubListMenu list={BOARDLIST} currentMenu={currentMenu} />
-      <NoticeContentWrap>
+      <SubBox>
         <SelectBtn>
           <select name='category' onChange={handleChange}>
             <option hidden>선택해주세요.</option>
@@ -52,7 +53,7 @@ const Faq = () => {
 
         <NoticeList>
           {faqList.length > 0 ? (
-            faqList.map((el, idx) => (
+            faqList.map(el => (
               <details key={el.id}>
                 <summary><span>[{el.category}]</span>{el.title}</summary>
                 <Contents>
@@ -68,34 +69,12 @@ const Faq = () => {
             <NotFoundText>등록된 FAQ가 없습니다.</NotFoundText>
           }
         </NoticeList>
-      </NoticeContentWrap>
-    </NoticeWrap>
+      </SubBox>
+    </SubWrap>
   )
 }
 
 export default Faq;
-
-
-const NoticeWrap = styled.div`
-  max-width: ${(props) => props.theme.pcWidth};
-  margin: 10rem auto 5rem auto;
-  ${media.mobile} {
-    margin: 5rem auto 5rem auto;
-  }
-  padding: 3rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  ${media.tablet} {
-    display: block;
-  }
-`;
-
-const NoticeContentWrap = styled.div`
-  width: 100%;
-  ${media.tablet} {
-    margin-top: 3rem;
-  }
-`;
 
 const SelectBtn = styled.div`
   display: flex;
@@ -135,9 +114,11 @@ const NoticeList = styled.div`
     padding: 20px;
     list-style: none;
     cursor: pointer;
+
+    ${media.tablet} {
+      font-size: 0.9rem;
+    }
   }
-
-
 
   span {
     margin-right: 10px;
@@ -154,6 +135,10 @@ const Contents = styled.div`
   p {
     line-height: 1.5rem;
     white-space: pre-wrap;
+
+    ${media.tablet} {
+      font-size: 0.9rem;
+    }
   }
 
 `;

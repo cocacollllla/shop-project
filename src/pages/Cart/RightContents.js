@@ -1,31 +1,101 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { priceCommas} from '../../data/Data';
 import { AiOutlineCheck } from "react-icons/ai";
+import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
 import media from '../../styles/media';
 import styled from 'styled-components';
+import { dbService } from '../../myFirebase';
 
-const RightContents = ({doneList, result}) => {
+const RightContents = ({doneList, result, savedMoney, address, isDefaultArr}) => {
+  const user = useSelector(state => state.users);
   const navigate = useNavigate();
+  const location = useLocation();
+  const date = moment();
+  const currentMenu = location.pathname.split('/').reverse()[0];
 
-  const orderClick = () => {
-    if(result !== 0) {
-      navigate('/order');
-    }
-  }
+  const orderList = [...doneList];
+
+  const savedM = currentMenu !== 'order' || savedMoney === '' ? 0 : savedMoney; 
+  const delivery = result === 0 || result >= 100000 ? 0 : 5000;
+  const pay = parseInt(result) + parseInt(delivery) - parseInt(savedM);
+
   
+  const orderClick = () => {
+    if(currentMenu === 'order') {
+      if(user.address.addr === '' && address.addr === '') {
+        alert('배송지를 입력해주세요.');
+      } else {
+
+        try {
+          const order = {
+            uid: user.uid,
+            products: orderList,
+            orderID: `${uuidv4()}`,
+            orderDate: date.format('YYYY-MM-DD'),
+            orderInfo: {
+              result,
+              delivery,
+              savedMoney: savedM,
+              pay,
+            },
+            userInfo: {
+              userName: user.displayName,
+              userAddress: address.addr === '' ? `${user.address.addr} ${user.address.addrDetail}` : `${address.addr} ${address.addrDetail}`,
+            }
+          }
+          dbService.collection('order').add(order);
+          orderList.forEach(el => {
+            dbService.collection('cart').doc(el.docID).delete()
+          });
+          dbService.collection('users').doc(user.uid).update({
+            saved_money: (parseInt(user.saved_money) - parseInt(savedM)).toString()
+          });
+          if(isDefaultArr) {
+            dbService.collection('users').doc(user.uid).update({
+              address : {
+                zip : address.zip,
+                addr : address.addr,
+                addrDetail : address.addrDetail
+              }
+            });
+          }
+          alert('주문이 완료되었습니다.');
+          navigate('/');
+    
+        } catch(error) {
+          console.log(error);
+        } 
+      }
+    } else {
+      result !== 0 && navigate('/order', { state: orderList })
+    }
+    
+  }
+
+
+
   return (
     <RightContentsWrap>
       <ResultBox>
         <PriceBox>
-          <p><AiOutlineCheck className="icon" /><span>{doneList.length} 개 상품을 선택하셨습니다.</span></p>
+          {currentMenu !== 'order' && 
+            <p><AiOutlineCheck className="icon" /><span>{doneList.length} 개 상품을 선택하셨습니다.</span></p>
+          }
           <ul>
             <li><span>상품금액</span><span>{priceCommas(result)} 원</span></li>
-            <li><span>배송비</span><span>{result === 0 || result >= 100000 ? 0 : priceCommas(5000)} 원</span></li>
+            <li><span>배송비</span><span>{priceCommas(delivery)} 원</span></li>
+            {currentMenu === 'order' && 
+            <li><span>적립금사용</span><span>{savedM !== 0 && '- '}{priceCommas(savedM)} 원</span></li>
+            }
           </ul>
+          
           <div>
-            <span>결제예정금액</span><span>{result === 0 || result >= 100000 ? priceCommas(result) : priceCommas(result + 5000)} 원</span>
+            <span>결제예정금액</span><span>{priceCommas(pay)} 원</span>
           </div>
+          
         </PriceBox>
         <BuyBtn>
           <div onClick={orderClick}>주문하기</div>

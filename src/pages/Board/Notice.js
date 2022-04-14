@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { BOARDLIST } from '../../data/Data';
+import { SubWrap, SubBox } from '../../components/Style';
 import SubListMenu from '../../components/SubListMenu';
-import media from '../../styles/media';
-import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNoticeData } from '../../store/board-actions';
+import styled from 'styled-components';
 
 const Notice = () => {
   const noticeList = useSelector(state => state.board);
@@ -19,9 +19,9 @@ const Notice = () => {
   }, [dispatch]);
 
   return (
-    <NoticeWrap>
+    <SubWrap>
       <SubListMenu list={BOARDLIST} currentMenu={currentMenu} />
-      <NoticeContentWrap>
+      <SubBox>
         <WriteBtn onClick={() => navigate(`/notice/write`)}><span>글쓰기</span></WriteBtn>
         <NoticeTitleList>
           <div>No</div><div>제목</div><div>날짜</div>
@@ -33,36 +33,12 @@ const Notice = () => {
             ))}
           </ul>
         </NoticeList>
-      </NoticeContentWrap>
-    </NoticeWrap>
+      </SubBox>
+    </SubWrap>
   )
 }
 
 export default Notice;
-
-
-const NoticeWrap = styled.div`
-  max-width: ${(props) => props.theme.pcWidth};
-  margin: 10rem auto 5rem auto;
-  ${media.mobile} {
-    margin: 5rem auto 5rem auto;
-  }
-  padding: 3rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  ${media.tablet} {
-    display: block;
-  }
-`;
-
-const NoticeContentWrap = styled.div`
-  width: 100%;
-  border-bottom: 1px solid #333;
-  ${media.tablet} {
-    margin-top: 3rem;
-  }
-  
-`;
 
 
 const WriteBtn = styled.div`

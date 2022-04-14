@@ -1,14 +1,7 @@
-function range(size, start) {
-  return [...Array(size).keys()].map(key => (key / 2 + start) + 0.5); 
-}
-
-export const ringSize = range(51, 4.5);
 
 export const PRODUCTOPTION = [
   {id: 0, class:"option", option: "종류", content: ["necklace", "bracelet", "earring", "ring"]},
   {id: 1, class:"title", option: "상품명"},
-  // {id: 2, class:"color", option: "색상", content: ["골드", "화이트골드", "로즈골드"], require: true},
-  // {id: 4, class:"size", option: "호수", content: ringSize, require: false},
   {id: 2, class:"price", option: "가격", content: 0},
   {id: 3, class:"contents", option: "내용", content: 0},
   {id: 4, class:"image", option: "이미지", content: 0},
@@ -40,6 +33,8 @@ export const SIGN = [
     title: '회원가입'
   }
 ];
+
+export const MYPAGE = {'account' : '개인정보수정', 'order' : '주문내역', 'favorite' : '찜한 상품'};
 
 
 

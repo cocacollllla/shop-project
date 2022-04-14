@@ -5,14 +5,12 @@ const usersSlice = createSlice({
   initialState: null,
   reducers: {
     replaceData: (state, action) => 
-      // state.push({...action.payload})
       state = action.payload
     ,
     plusfav: (state, action) => {
       const existingItem = state.find(el => el.id === action.payload);
       existingItem.quantity++;
       existingItem.totalPrice = existingItem.quantity * existingItem.price;
-      
     },
     minusfav: (state, action) => {
       const existingItem = state.find(el => el.id === action.payload);

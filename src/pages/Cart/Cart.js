@@ -1,19 +1,16 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import media from '../../styles/media';
 import LeftContents from './LeftContents';
 import RightContents from './RightContents';
 import styled from 'styled-components';
 
 const Cart = () => {
-  const dispatch = useDispatch();
   const item = useSelector(state => state.cart);
 
   const doneList = item.filter(list => list.isChecked === true);
 
-  const result = doneList.reduce((acc, current) => acc + current.totalPrice, 0);
-
-  console.log('dd');
+  const result = doneList.reduce((acc, current) => acc + parseInt(current.totalPrice), 0);
 
   return (
     <DetailWrap>
@@ -53,8 +50,6 @@ const DetailWrap = styled.div`
     clip: rect(0 0 0 0);
   }
 `;
-
-
 
 const NoData = styled.div`
   width: 100%;

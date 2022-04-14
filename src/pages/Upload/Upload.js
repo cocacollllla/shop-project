@@ -5,6 +5,7 @@ import {PRODUCTOPTION} from '../../data/Data';
 import { dbService, storageService } from '../../myFirebase';
 import { v4 as uuidv4 } from 'uuid';
 import media from '../../styles/media';
+import { Button } from '../../components/Style';
 import styled from 'styled-components';
 
 
@@ -15,7 +16,7 @@ const Upload = () => {
     title: '',
     contents: '',
     price: 0,
-    id: Date.now()
+    id: Date.now(),
   });
 
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const Upload = () => {
         const response = await attatchmentRef.putString(attatchment, 'data_url');
         attatchmentUrl = await response.ref.getDownloadURL();
       }
-      await dbService.collection("products").add({...optionValue, attatchmentUrl});
+      await dbService.collection("products").add({...optionValue, attatchmentUrl, favorite: []});
       navigate('/');
 
     } catch(error) {
@@ -67,7 +68,7 @@ const Upload = () => {
           <Options key={option.id} option={option} handleChange={handleChange} onFileChange={onFileChange} optionValue={optionValue} />
         ))}
        
-        <UploadBtn type="submit" value="올리기" />
+        <Button><input type="submit" value="올리기" /></Button>
       </form>
     </UploadWrap>
   );
@@ -92,16 +93,5 @@ const UploadWrap = styled.div`
 `;
 
 
-const UploadBtn = styled.input`
-  display: block;
-  margin: 30px auto 0 auto;
-  padding: .5rem 2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  background-color: ${(props) => props.theme.mainColor};
-  color: ${(props) => props.theme.white};
-  border-radius: 10px;
-  cursor: pointer;
-`;
 
 

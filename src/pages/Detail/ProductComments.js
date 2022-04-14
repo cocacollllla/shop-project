@@ -1,12 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Comment from './Comment';
-import moment from 'moment';
 import { dbService } from '../../myFirebase';
 import styled from 'styled-components';
 
 const ProductComments = ({user, productId}) => {
-  const date = moment();
 
   const [comment, setComment] = useState([]);
   const [commentValue, setCommentValue] = useState('');
@@ -23,7 +20,7 @@ const ProductComments = ({user, productId}) => {
       getComment.sort((a,b) => b.date - a.date);
       setComment(getComment);
     });
-  }, []);
+  }, [productId]);
 
   const handleChange = (e) => {
     setCommentValue(e.target.value);
@@ -55,8 +52,6 @@ const ProductComments = ({user, productId}) => {
   }
 
 
-
-
   return (
     <div>
       <CommentForm onSubmit={onSubmit}>
@@ -64,7 +59,6 @@ const ProductComments = ({user, productId}) => {
         <input type="submit" value="작성" />
       </CommentForm>
 
-      {/* 댓글목록 */}
       <CommentListWrap>
         {comment.length === 0 ? 
           <p>상품후기가 없습니다.</p> : 

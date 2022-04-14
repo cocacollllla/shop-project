@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BOARDLIST, FAQCATEGORY } from '../../data/Data';
+import { SubWrap, SubBox } from '../../components/Style';
 import { dbService} from '../../myFirebase';
 import SubListMenu from '../../components/SubListMenu';
 import media from '../../styles/media';
+import { Button } from '../../components/Style';
 import styled from 'styled-components';
 
 const FaqUpload = () => {
@@ -22,18 +24,15 @@ const FaqUpload = () => {
 
   const idid = parseInt(params.id);
 
-  const getFilterIdItem = async () => {
-    const getProduct = await dbService.collection('faq').where('id', '==', idid).get();
-      const Product = getProduct.docs.map(doc => ({ docId:doc.id, ...doc.data()}));
-      setUpdateData(Product[0]);
-  };
 
   useEffect(() => {
     if(params.state === 'update'){
-      getFilterIdItem();
+      dbService.collection('faq').where('id', '==', idid).get().then((querySnapshot) => {
+        const Product = querySnapshot.docs.map(doc => ({ docId:doc.id, ...doc.data()}));
+        setUpdateData(Product[0]);
+      });
     }
-  }, []);
-
+  }, [idid, params.state]);
 
 
   const handleChange = (e) => {
@@ -73,9 +72,9 @@ const FaqUpload = () => {
   }
 
   return (
-    <NoticeWrap>
+    <SubWrap>
       <SubListMenu list={BOARDLIST} currentMenu={currentMenu} />
-      <NoticeWriteWrap>
+      <SubBox>
         <WriteBtn onClick={() => navigate(`/notice`)}><span>목록</span></WriteBtn>
         <FormBox onSubmit={onSubmit}>
           <WriteBox>
@@ -98,37 +97,16 @@ const FaqUpload = () => {
             <WriteName>내용</WriteName>
             <WriteContent><textarea name="contents" onChange={handleChange} value={(updateData.contents ? updateData.contents : optionValue.contents) || ''}></textarea></WriteContent></WriteBox>
 
-          <UploadBtn type="submit" value="올리기" />
+          <Button><input type="submit" value="올리기" /></Button>
         </FormBox>
         
-      </NoticeWriteWrap>
-    </NoticeWrap>
+      </SubBox>
+    </SubWrap>
   )
 }
 
 export default FaqUpload;
 
-
-const NoticeWrap = styled.div`
-  max-width: ${(props) => props.theme.pcWidth};
-  margin: 10rem auto 5rem auto;
-  ${media.mobile} {
-    margin: 5rem auto 5rem auto;
-  }
-  padding: 3rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  ${media.tablet} {
-    display: block;
-  }
-`;
-
-const NoticeWriteWrap = styled.div`
-  width: 100%;
-  ${media.tablet} {
-    margin-top: 3rem;
-  }
-`;
 
 const WriteBtn = styled.div`
   display: flex;
@@ -147,18 +125,6 @@ const FormBox = styled.form`
   margin-top: 1rem;
 `;
 
-const UploadBtn = styled.input`
-  display: block;
-  margin: 30px auto 0 auto;
-  padding: .5rem 2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  background-color: ${(props) => props.theme.mainColor};
-  color: ${(props) => props.theme.white};
-  border-radius: 10px;
-  cursor: pointer;
-`;
-
 
 const WriteBox = styled.div`
   border-top: 1px solid ${(props) => props.theme.borderColor};
@@ -167,7 +133,7 @@ const WriteBox = styled.div`
   justify-content: flex-start;
   align-items: center;
 
-  &:last-of-type {
+  &:nth-last-child(2) {
     border-bottom: 1px solid ${(props) => props.theme.borderColor};
   }
 
@@ -184,6 +150,7 @@ const WriteName = styled.div`
   width: 150px;
   ${media.tablet} {
     width: 100px;
+    font-size: 0.9rem;
   }
   text-align: center;
   font-weight: 500;

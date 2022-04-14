@@ -1,18 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { authService, dbService } from '../myFirebase';
-import { v4 as uuidv4 } from 'uuid';
-import { useNavigate } from 'react-router-dom';
 import { usersActions } from '../store/users-slice';
 import styled from 'styled-components';
 
-const FormLayout = ({sign, title, inputData}) => {
-  const [signInfo, setSignInfo] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
-  const navigate = useNavigate();
+const FormLayout = ({sign, title, inputData, signInfo, setSignInfo}) => {
+
   const dispatch = useDispatch();
 
   const onChange = (e) => {
@@ -33,18 +26,12 @@ const FormLayout = ({sign, title, inputData}) => {
         });
         dispatch(usersActions.replaceData({uid: user.uid, displayName: user.displayName, email: user.email, photoURL: user.photoURL}));
 
-        // let userUID = authService.currentUser;
-        // await dbService.collection("users").add({uid: userUID.uid, displayName: signInfo.name, email: signInfo.email, favorite: []});
-        
-        // dispatch(usersActions.replaceData({displayName: signInfo.name, email: signInfo.email}));
-        // await authService.signOut();
-        // navigate(`/sign/done`);
-      } else {
-        await authService.signInWithEmailAndPassword(signInfo.email, signInfo.password).then(userCredential => {
-          // console.log(userCredential.user);
-          // dispatch(usersActions.replaceData({uid: userCredential.user.uid, displayName: userCredential.user.displayName, email: userCredential.user.email}));
+        await dbService.collection("users").doc(user.uid).set({
+          uid: user.uid, displayName: signInfo.name, email: signInfo.email, photoURL: null, saved_money: '2000', address: { zip: '', addr: '', addrDetail: ''}
         });
         
+      } else {
+        await authService.signInWithEmailAndPassword(signInfo.email, signInfo.password);
       }
     } catch(error) {
       if(error.code === 'auth/email-already-in-use') {
@@ -59,12 +46,10 @@ const FormLayout = ({sign, title, inputData}) => {
     }
   }
 
-
-
   return (
     <SignForm onSubmit={onSubmit}>
       {inputData.map((input, idx) => (
-        <SignFormInput key={idx} type={input.type} name={input.name} placeholder={input.name} onChange={onChange} required />
+        <SignFormInput key={idx} type={input.type} name={input.name} value={signInfo[input.name]} placeholder={input.name} onChange={onChange} required />
       ))}
       <SubmitBtn type="submit" value={title} />
     </SignForm>
@@ -81,7 +66,7 @@ const SignForm = styled.form`
 
 const SignFormInput = styled.input`
   width: 100%;
-  padding: 1rem;
+  padding: 1rem !important;
   margin-bottom: .5rem;
   border-radius: 5px;
   border: 1px solid ${(props) => props.theme.borderColor};

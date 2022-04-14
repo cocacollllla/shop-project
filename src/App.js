@@ -4,6 +4,7 @@ import Routes from './Routes';
 import { authService, dbService } from './myFirebase';
 import { usersActions } from './store/users-slice';
 import { getCartData } from './store/cart-actions';
+import { cartActions } from './store/cart-slice';
 
 function App() {
   const [init, setInit] = useState(false);
@@ -11,28 +12,26 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-     authService.onAuthStateChanged(user => {
-      if(user) {
-        setIsLoggedIn(true);
-        dispatch(usersActions.replaceData({uid: user.uid, displayName: user.displayName, email: user.email, photoURL: user.photoURL}));
-        dispatch(getCartData(user.uid));
-        // let userInfo = user.uid;
-        // dbService.collection('users').where('uid', "==", userInfo).onSnapshot((querySnapshot) => {
-        //   const userUser = querySnapshot.docs.map(doc => ({ docID:doc.id, ...doc.data()}));
-        //   dispatch(usersActions.replaceData(userUser));
-        // });
-      } else {
-        setIsLoggedIn(false);
-        dispatch(usersActions.replaceData(null));
-      }
-      setInit(true);
+    dbService.collection('users').onSnapshot((querySnapshot) => {
+      const userUser = querySnapshot.docs.map(doc => ({ docID:doc.id, ...doc.data()}));
+
+      authService.onAuthStateChanged(user => {
+        if(user) {
+          const userFilter = userUser.find(el => el.uid === user.uid);
+          setIsLoggedIn(true);
+          dispatch(getCartData(user.uid));
+          dispatch(usersActions.replaceData(userFilter));
+        } else {
+          setIsLoggedIn(false);
+          dispatch(usersActions.replaceData(null));
+          dispatch(cartActions.replaceData([]));
+        }
+        setInit(true);
+      });
+
     });
+  }, [dispatch]);
 
-    
-  }, []);
-
-
-  console.log(isLoggedIn);
   return (
     <>
       {init ? <Routes isLoggedIn={isLoggedIn} /> : "Loading...."}

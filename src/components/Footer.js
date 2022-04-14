@@ -1,8 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router';
-import styled from 'styled-components';
 import media from '../styles/media';
 import { FaTwitterSquare, FaFacebookSquare, FaInstagramSquare } from "react-icons/fa";
+import styled from 'styled-components';
 
 const Footer = () => {
   const location = useLocation();
@@ -46,7 +46,6 @@ const Footer = () => {
               <li><FaInstagramSquare /><span>인스타그램</span></li>
               <li><FaFacebookSquare /><span>페이스북</span></li>
               <li><FaTwitterSquare /><span>트위터</span></li>
-
             </ul>
           </SocialIcon>
           <div>&copy; Jewellery. All Rights Reserved.</div>

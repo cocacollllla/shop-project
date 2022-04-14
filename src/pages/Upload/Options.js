@@ -2,7 +2,7 @@ import React from "react";
 import media from '../../styles/media';
 import styled from "styled-components";
 
-const Options = ({ option, handleChange, optionValue, onFileChange }) => {
+const Options = ({ option, handleChange, onFileChange }) => {
 
 
   const menuList = () => {
