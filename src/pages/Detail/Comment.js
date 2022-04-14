@@ -39,12 +39,14 @@ const Comment = ({comments, user, isActive, changeActiveTab}) => {
       <CommentUserInfo>
         {profileImage()}
         <span>{comments.user_name}</span>
-        {user.uid === comments.user_id && 
-          <CommentBtn>
-            <div onClick={() => setIsModify(!isModify)}>수정</div>
-            <div onClick={commentDelete}>삭제</div>
-          </CommentBtn>
+        {user !== null &&
+          user.uid === comments.user_id && 
+            <CommentBtn>
+              <div onClick={() => setIsModify(!isModify)}>수정</div>
+              <div onClick={commentDelete}>삭제</div>
+            </CommentBtn>
         }
+        
       </CommentUserInfo>
       <CommentContents>
         {isModify ? 
